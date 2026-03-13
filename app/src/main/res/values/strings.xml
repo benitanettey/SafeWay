@@ -13,7 +13,7 @@
     <string name="quick_actions">QUICK ACTIONS</string>
     <string name="emergency_alert">Emergency</string>
     <string name="log_incident">Log incident</string>
-    <string name="my_circle">My circle</string>
+    <string name="my_circle">My Circle</string>
     <string name="records">Records</string>
     <string name="support_hotlines">SUPPORT HOTLINES</string>
     <string name="police">Police</string>
@@ -45,6 +45,8 @@
     <!-- Log Incident Screen -->
     <string name="log_incident_title">Log incident</string>
     <string name="voice_note">Voice note</string>
+    <string name="delete_voice_note">Delete voice note</string>
+    <string name="record_time_default">0:00</string>
     <string name="tap_to_record">Tap to record — stored encrypted</string>
     <string name="what_happened">What happened?</string>
     <string name="describe_incident">Describe the incident. Only you can see this...</string>
@@ -52,8 +54,35 @@
     <string name="severity">Severity</string>
     <string name="location">Location</string>
     <string name="who_optional">Who (optional)</string>
+    <string name="who_hint">Partner / Family / Colleague / Other...</string>
     <string name="save_to_journal">Save to private journal</string>
     <string name="saved_to_journal">Saved to private journal</string>
+    <string name="recording">Recording...</string>
+    <string name="tap_to_stop">Tap to stop</string>
+    <string name="voice_note_saved">Voice note saved</string>
+    <string name="encrypted_duration">Encrypted • %1$s</string>
+    <string name="please_describe_incident">Please describe the incident</string>
+    <string name="incident_saved_success">Incident saved to private journal</string>
+    <string name="incident_saved_with_voice_note">Incident and voice note saved to private journal</string>
+    <string name="incident_save_failed">Could not save incident. Please try again.</string>
+    <string name="who_unknown">Unknown</string>
+    <string name="please_enter_location">Please enter a location</string>
+    <string name="please_select_incident_type">Please select an incident type</string>
+    <string name="please_select_severity">Please select severity</string>
+    <string name="voice_note_recorded">Voice note recorded (%1$s)</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_start_failed">Could not start recording</string>
+    <string name="recording_invalid_retry">Recording failed. Please record again.</string>
+    <string name="recording_permission_required">Microphone permission is required to record voice notes</string>
+    <string name="voice_note_deleted">Voice note deleted</string>
+    <string name="no_voice_note_to_delete">No voice note to delete</string>
+    <string name="play_voice_note_preview">Play voice note preview</string>
+    <string name="stop_voice_note_preview">Stop voice note preview</string>
+    <string name="preview_playing">Preview playing...</string>
+    <string name="preview_failed">Could not play this voice note</string>
+    <string name="no_voice_note_to_preview">No voice note available to preview</string>
+    <string name="stop_recording_before_preview">Stop recording before previewing</string>
+    <string name="tap_preview_or_record">Tap preview or record again</string>
 
     <!-- Incident Types -->
     <string name="incident_physical">Physical</string>
@@ -78,6 +107,38 @@
     <string name="private_records_title">Private records</string>
     <string name="export_for_legal">Export for legal use</string>
     <string name="export_encrypted_report">Export encrypted report</string>
+    <string name="no_records_yet">No incidents yet. Log an incident and it will appear here.</string>
+    <string name="no_records_match_filters">No records match your current search/filter.</string>
+    <string name="search_records_hint">Search by type, details, who, or location</string>
+    <string name="filter_all_severity">Severity: All</string>
+    <string name="filter_severity_low">Severity: Low</string>
+    <string name="filter_severity_medium">Severity: Medium</string>
+    <string name="filter_severity_high">Severity: High</string>
+    <string name="filter_severity_crisis">Severity: Crisis</string>
+    <string name="filter_voice_all">Voice: All</string>
+    <string name="filter_voice_with">Voice: With note</string>
+    <string name="filter_voice_without">Voice: Without note</string>
+    <string name="sort_newest_first">Sort: Newest</string>
+    <string name="sort_oldest_first">Sort: Oldest</string>
+    <string name="records_exported">Exported %1$d records (encrypted)</string>
+    <string name="record_details">Record details</string>
+    <string name="record_detail_subtitle">Review, update, or remove this incident record</string>
+    <string name="record_updated">Record updated</string>
+    <string name="record_deleted">Record deleted</string>
+    <string name="view_details">Details</string>
+    <string name="pause_voice_note_preview">Pause voice note preview</string>
+    <string name="preview_stopped">Preview stopped</string>
+    <string name="preview_paused">Preview paused</string>
+    <string name="share_export">Share export</string>
+    <string name="export_failed">Export failed. Please try again.</string>
+    <string name="export_csv">CSV</string>
+    <string name="export_pdf">PDF</string>
+    <string name="export_encrypted">Encrypted</string>
+    <string name="load_more">Load more</string>
+    <string name="nothing_to_export">No records to export yet</string>
+    <string name="recent_alert_message">Most recent record at %1$s — %2$d total incident(s) securely stored</string>
+    <string name="records_alert_banner_default">Recent records summary will appear here</string>
+    <string name="export_legal_description">All records include device timestamps and integrity details for legal admissibility.</string>
 
     <!-- Add Contact Screen -->
     <string name="add_to_circle_title">Add to circle</string>
@@ -107,6 +168,9 @@
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="delete">Delete</string>
+    <string name="gps_logged">GPS logged</string>
 </resources>
 

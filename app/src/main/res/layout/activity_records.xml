@@ -79,263 +79,102 @@
                     android:layout_marginEnd="10dp" />
 
                 <TextView
+                    android:id="@+id/tv_alert_banner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Alert sent today 09:14 — 3 contacts notified, GPS logged"
+                    android:text="@string/records_alert_banner_default"
                     android:textSize="12sp"
                     android:textColor="@color/highlight_accent" />
 
             </LinearLayout>
 
-            <!-- Record 1 -->
+            <!-- Search, Filter, Sort Controls -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/card_background"
-                android:padding="14dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <EditText
+                    android:id="@+id/et_search_records"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_bg"
+                    android:hint="@string/search_records_hint"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/neutral_muted"
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <Spinner
+                        android:id="@+id/sp_filter_severity"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Physical altercation"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/edit_text_bg" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <Spinner
+                        android:id="@+id/sp_filter_voice"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Mar 11 • 22:40"
-                        android:textSize="11sp"
-                        android:textColor="@color/neutral_muted" />
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/edit_text_bg" />
+
+                    <Spinner
+                        android:id="@+id/sp_sort_records"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_text_bg" />
 
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Was struck on the shoulder at home. Denied it happened before to family members."
-                    android:textSize="12sp"
-                    android:textColor="@color/neutral_text"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:lineHeight="18sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="High"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="#2a1418"
-                        app:chipStrokeColor="#4a1a1a"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GPS logged"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Voice note"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/primary_accent"
-                        app:chipStrokeColor="@color/primary_accent"
-                        app:chipStrokeWidth="0dp" />
-
-                </LinearLayout>
-
             </LinearLayout>
 
-            <!-- Record 2 -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_empty_records"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/card_background"
-                android:padding="14dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/card_background"
+                android:padding="14dp"
+                android:text="@string/no_records_yet"
+                android:textColor="@color/neutral_text"
+                android:textSize="12sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Verbal / emotional"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mar 8 • 18:22"
-                        android:textSize="11sp"
-                        android:textColor="@color/neutral_muted" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sustained verbal threats in front of children. Threatened to file false reports."
-                    android:textSize="12sp"
-                    android:textColor="@color/neutral_text"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:lineHeight="18sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Medium"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GPS logged"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Timestamped"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Record 3 -->
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_records"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/card_background"
-                android:padding="14dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="8dp"
+                android:nestedScrollingEnabled="false" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Financial control"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mar 2 • 10:05"
-                        android:textSize="11sp"
-                        android:textColor="@color/neutral_muted" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="All bank accounts restricted without consent for third consecutive week."
-                    android:textSize="12sp"
-                    android:textColor="@color/neutral_text"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:lineHeight="18sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Medium"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GPS logged"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Voice note"
-                        android:layout_margin="3dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/primary_accent"
-                        app:chipStrokeColor="@color/primary_accent"
-                        app:chipStrokeWidth="0dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
+            <Button
+                android:id="@+id/btn_load_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/button_secondary_bg"
+                android:text="@string/load_more"
+                android:textColor="@color/highlight_accent"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <!-- Export Section -->
             <LinearLayout
@@ -351,7 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/export_for_legal"
-                    android:textSize="10sp"
+                    android:textSize="11sp"
                     android:textColor="@color/section_label"
                     android:letterSpacing="0.15"
                     android:textStyle="bold"
@@ -360,25 +199,51 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="All records include GPS coordinates, device timestamps, and hash verification for legal admissibility."
+                    android:text="@string/export_legal_description"
                     android:textSize="12sp"
                     android:textColor="@color/neutral_text"
-                    android:layout_marginBottom="10dp"
-                    android:lineHeight="18sp" />
+                    android:layout_marginBottom="10dp" />
 
-                <Button
-                    android:id="@+id/btn_export_report"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_secondary_bg"
-                    android:text="@string/export_encrypted_report"
-                    android:textColor="@color/highlight_accent"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp" />
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_export_csv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_secondary_bg"
+                        android:text="@string/export_csv"
+                        android:textColor="@color/highlight_accent"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btn_export_pdf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/button_secondary_bg"
+                        android:text="@string/export_pdf"
+                        android:textColor="@color/highlight_accent"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btn_export_encrypted"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/button_secondary_bg"
+                        android:text="@string/export_encrypted"
+                        android:textColor="@color/highlight_accent"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -466,7 +466,7 @@
     <LinearLayout
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="@drawable/nav_bar_background"
@@ -490,6 +490,14 @@
                 android:tint="@color/highlight_accent"
                 android:scaleType="centerInside"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/home"
+                android:textColor="@color/highlight_accent"
+                android:textSize="10sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -507,6 +515,14 @@
                 android:contentDescription="@string/log_incident"
                 android:tint="@color/neutral_text"
                 android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/log_incident"
+                android:textColor="@color/neutral_text"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -526,6 +542,14 @@
                 android:tint="@color/neutral_muted"
                 android:scaleType="centerInside"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/my_circle"
+                android:textColor="@color/neutral_muted"
+                android:textSize="10sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -543,6 +567,14 @@
                 android:contentDescription="@string/records"
                 android:tint="@color/neutral_text"
                 android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/records"
+                android:textColor="@color/neutral_text"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
