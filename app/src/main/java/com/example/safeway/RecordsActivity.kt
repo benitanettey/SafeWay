@@ -309,6 +309,8 @@ class RecordsActivity : AppCompatActivity() {
         val etSeverity = view.findViewById<EditText>(R.id.et_detail_severity)
         val etLocation = view.findViewById<EditText>(R.id.et_detail_location)
         val etWho = view.findViewById<EditText>(R.id.et_detail_who)
+        val btnPhoto = view.findViewById<Button>(R.id.btn_detail_photo)
+        val btnVideo = view.findViewById<Button>(R.id.btn_detail_video)
         val btnPlay = view.findViewById<Button>(R.id.btn_detail_play)
         val btnSave = view.findViewById<Button>(R.id.btn_detail_save)
         val btnDelete = view.findViewById<Button>(R.id.btn_detail_delete)
@@ -319,6 +321,8 @@ class RecordsActivity : AppCompatActivity() {
         etLocation.setText(incident.location)
         etWho.setText(incident.who)
 
+        btnPhoto.isEnabled = !incident.photoPath.isNullOrBlank() && File(incident.photoPath).exists()
+        btnVideo.isEnabled = !incident.videoPath.isNullOrBlank() && File(incident.videoPath).exists()
         btnPlay.isEnabled = incident.hasVoiceNote && !incident.voiceNotePath.isNullOrBlank() && File(incident.voiceNotePath).exists()
 
         val dialog = AlertDialog.Builder(this)
@@ -326,6 +330,14 @@ class RecordsActivity : AppCompatActivity() {
             .setView(view)
             .setNegativeButton(getString(R.string.cancel), null)
             .create()
+
+        btnPhoto.setOnClickListener {
+            openMediaFromPath(incident.photoPath, "image/*")
+        }
+
+        btnVideo.setOnClickListener {
+            openMediaFromPath(incident.videoPath, "video/*")
+        }
 
         btnPlay.text = if (isPlaybackRunning && currentlyPlayingIncidentId == incident.id) {
             getString(R.string.pause)
@@ -363,6 +375,12 @@ class RecordsActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 database.incidentDao().deleteIncident(incident)
                 incident.voiceNotePath?.let { path ->
+                    File(path).takeIf { it.exists() }?.delete()
+                }
+                incident.photoPath?.let { path ->
+                    File(path).takeIf { it.exists() }?.delete()
+                }
+                incident.videoPath?.let { path ->
                     File(path).takeIf { it.exists() }?.delete()
                 }
                 Toast.makeText(this@RecordsActivity, getString(R.string.record_deleted), Toast.LENGTH_SHORT).show()
@@ -466,6 +484,31 @@ class RecordsActivity : AppCompatActivity() {
 
     private enum class ExportType { CSV, PDF, ENCRYPTED }
 
+    private fun openMediaFromPath(path: String?, mimeType: String) {
+        if (path.isNullOrBlank()) {
+            Toast.makeText(this, getString(R.string.unable_to_open_media), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val file = File(path)
+        if (!file.exists()) {
+            Toast.makeText(this, getString(R.string.unable_to_open_media), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, mimeType)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.unable_to_open_media), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun exportAndShareRecords(type: ExportType) {
         if (visibleIncidents.isEmpty()) {
             Toast.makeText(this, getString(R.string.nothing_to_export), Toast.LENGTH_SHORT).show()
@@ -498,7 +541,7 @@ class RecordsActivity : AppCompatActivity() {
     private fun createCsvExportFile(records: List<Incident>): File {
         val exportDir = ensureExportDir()
         val file = File(exportDir, "records_${System.currentTimeMillis()}.csv")
-        val header = "id,type,severity,timestamp,description,location,who,hasVoiceNote,voiceDurationSec,voiceNotePath\n"
+        val header = "id,type,severity,timestamp,description,location,who,hasVoiceNote,voiceDurationSec,voiceNotePath,photoPath,videoPath\n"
         val rows = records.joinToString("\n") { record ->
             listOf(
                 record.id.toString(),
@@ -510,7 +553,9 @@ class RecordsActivity : AppCompatActivity() {
                 csv(record.who),
                 record.hasVoiceNote.toString(),
                 record.voiceDurationSec.toString(),
-                csv(record.voiceNotePath ?: "")
+                csv(record.voiceNotePath ?: ""),
+                csv(record.photoPath ?: ""),
+                csv(record.videoPath ?: "")
             ).joinToString(",")
         }
         file.writeText(header + rows)
@@ -543,6 +588,10 @@ class RecordsActivity : AppCompatActivity() {
             y += 16f
             canvas.drawText("Voice: ${if (record.hasVoiceNote) "Yes (${record.voiceDurationSec}s)" else "No"}", 24f, y, paint)
             y += 16f
+            canvas.drawText("Photo: ${if (!record.photoPath.isNullOrBlank()) "Attached" else "None"}", 24f, y, paint)
+            y += 16f
+            canvas.drawText("Video: ${if (!record.videoPath.isNullOrBlank()) "Attached" else "None"}", 24f, y, paint)
+            y += 16f
             canvas.drawText("Details: ${record.description.take(70)}", 24f, y, paint)
             y += 22f
         }
@@ -571,6 +620,8 @@ class RecordsActivity : AppCompatActivity() {
             Voice: ${record.hasVoiceNote}
             VoiceDurationSec: ${record.voiceDurationSec}
             VoicePath: ${record.voiceNotePath ?: ""}
+            PhotoPath: ${record.photoPath ?: ""}
+            VideoPath: ${record.videoPath ?: ""}
             """.trimIndent()
         }.toByteArray(Charsets.UTF_8)
 

@@ -15,6 +15,8 @@ data class Incident(
     val hasVoiceNote: Boolean,
     val voiceNotePath: String?,
     val voiceDurationSec: Int,
+    val photoPath: String? = null,
+    val videoPath: String? = null,
     val createdAtMillis: Long = System.currentTimeMillis()
 )
 

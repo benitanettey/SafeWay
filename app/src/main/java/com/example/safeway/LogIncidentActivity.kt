@@ -1,9 +1,11 @@
 package com.example.safeway
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -15,13 +17,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.safeway.data.AppDatabase
 import com.example.safeway.data.Incident
@@ -44,6 +49,14 @@ class LogIncidentActivity : AppCompatActivity() {
     private lateinit var etDescription: EditText
     private lateinit var etLocation: EditText
     private lateinit var etWho: EditText
+    private lateinit var btnTakePhoto: Button
+    private lateinit var btnTakeVideo: Button
+    private lateinit var btnPreviewVideo: Button
+    private lateinit var btnDeletePhoto: Button
+    private lateinit var btnDeleteVideo: Button
+    private lateinit var tvPhotoStatus: TextView
+    private lateinit var tvVideoStatus: TextView
+    private lateinit var ivPhotoPreview: ImageView
     private lateinit var btnSave: Button
     private lateinit var database: AppDatabase
 
@@ -52,12 +65,51 @@ class LogIncidentActivity : AppCompatActivity() {
     private var mediaRecorder: MediaRecorder? = null
     private var mediaPlayer: MediaPlayer? = null
     private var voiceNotePath: String? = null
+    private var photoPath: String? = null
+    private var videoPath: String? = null
+    private var pendingPhotoPath: String? = null
+    private var pendingVideoPath: String? = null
     private var isPlayingPreview = false
     private val recordingHandler = Handler(Looper.getMainLooper())
 
+    private enum class PendingCaptureAction {
+        NONE,
+        PHOTO,
+        VIDEO
+    }
+
+    private var pendingCaptureAction: PendingCaptureAction = PendingCaptureAction.NONE
+
     companion object {
         private const val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 2001
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 2002
     }
+
+    private val takePhotoLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && !pendingPhotoPath.isNullOrBlank()) {
+                photoPath = pendingPhotoPath
+                Toast.makeText(this, getString(R.string.photo_attached), Toast.LENGTH_SHORT).show()
+            } else {
+                pendingPhotoPath?.let { deleteFileSafely(it) }
+                Toast.makeText(this, getString(R.string.photo_capture_failed), Toast.LENGTH_SHORT).show()
+            }
+            pendingPhotoPath = null
+            updateEvidenceStatus()
+        }
+
+    private val captureVideoLauncher =
+        registerForActivityResult(ActivityResultContracts.CaptureVideo()) { success ->
+            if (success && !pendingVideoPath.isNullOrBlank()) {
+                videoPath = pendingVideoPath
+                Toast.makeText(this, getString(R.string.video_attached), Toast.LENGTH_SHORT).show()
+            } else {
+                pendingVideoPath?.let { deleteFileSafely(it) }
+                Toast.makeText(this, getString(R.string.video_capture_failed), Toast.LENGTH_SHORT).show()
+            }
+            pendingVideoPath = null
+            updateEvidenceStatus()
+        }
 
     private val incidentTypeChips by lazy {
         listOf(
@@ -88,6 +140,7 @@ class LogIncidentActivity : AppCompatActivity() {
         setupChipSelection(incidentTypeChips)
         setupChipSelection(severityChips)
         updateVoiceActionButtons()
+        updateEvidenceStatus()
     }
 
     private fun initializeViews() {
@@ -102,6 +155,14 @@ class LogIncidentActivity : AppCompatActivity() {
         etDescription = findViewById(R.id.et_description)
         etLocation = findViewById(R.id.et_location)
         etWho = findViewById(R.id.et_who)
+        btnTakePhoto = findViewById(R.id.btn_take_photo)
+        btnTakeVideo = findViewById(R.id.btn_take_video)
+        btnPreviewVideo = findViewById(R.id.btn_preview_video)
+        btnDeletePhoto = findViewById(R.id.btn_delete_photo)
+        btnDeleteVideo = findViewById(R.id.btn_delete_video)
+        tvPhotoStatus = findViewById(R.id.tv_photo_status)
+        tvVideoStatus = findViewById(R.id.tv_video_status)
+        ivPhotoPreview = findViewById(R.id.iv_photo_preview)
         btnSave = findViewById(R.id.btn_save_incident)
 
         etDescription.gravity = Gravity.TOP or Gravity.START
@@ -135,8 +196,181 @@ class LogIncidentActivity : AppCompatActivity() {
             deleteCurrentVoiceNote()
         }
 
+        btnTakePhoto.setOnClickListener {
+            if (hasCameraPermission()) {
+                launchPhotoCapture()
+            } else {
+                pendingCaptureAction = PendingCaptureAction.PHOTO
+                requestCameraPermission()
+            }
+        }
+
+        btnTakeVideo.setOnClickListener {
+            if (hasCameraPermission()) {
+                launchVideoCapture()
+            } else {
+                pendingCaptureAction = PendingCaptureAction.VIDEO
+                requestCameraPermission()
+            }
+        }
+
+        btnDeletePhoto.setOnClickListener {
+            deletePhotoEvidence()
+        }
+
+        btnDeleteVideo.setOnClickListener {
+            deleteVideoEvidence()
+        }
+
+        ivPhotoPreview.setOnClickListener {
+            openPhotoPreview()
+        }
+
+        btnPreviewVideo.setOnClickListener {
+            openVideoPreview()
+        }
+
         btnSave.setOnClickListener {
             saveIncident()
+        }
+    }
+
+    private fun launchPhotoCapture() {
+        try {
+            photoPath?.let { deleteFileSafely(it) }
+            val outputFile = createMediaOutputFile(Environment.DIRECTORY_PICTURES, "photos", "jpg")
+            val photoUri = toFileProviderUri(outputFile)
+            pendingPhotoPath = outputFile.absolutePath
+            takePhotoLauncher.launch(photoUri)
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.photo_capture_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun launchVideoCapture() {
+        try {
+            videoPath?.let { deleteFileSafely(it) }
+            val outputFile = createMediaOutputFile(Environment.DIRECTORY_MOVIES, "videos", "mp4")
+            val videoUri = toFileProviderUri(outputFile)
+            pendingVideoPath = outputFile.absolutePath
+            captureVideoLauncher.launch(videoUri)
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.video_capture_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun createMediaOutputFile(directoryType: String, folderName: String, extension: String): File {
+        val baseDir = getExternalFilesDir(directoryType) ?: filesDir
+        val targetDir = File(baseDir, "SafeWay/$folderName")
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
+        }
+        val prefix = if (extension.equals("jpg", ignoreCase = true)) "photo" else "video"
+        return File(targetDir, "${prefix}_${System.currentTimeMillis()}.$extension")
+    }
+
+    private fun toFileProviderUri(file: File): Uri {
+        return FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
+    }
+
+    private fun updateEvidenceStatus() {
+        val photoExists = !photoPath.isNullOrBlank() && File(photoPath!!).exists()
+        val videoExists = !videoPath.isNullOrBlank() && File(videoPath!!).exists()
+
+        if (!photoExists) {
+            photoPath = null
+        }
+        if (!videoExists) {
+            videoPath = null
+        }
+
+        tvPhotoStatus.text = if (photoExists) {
+            getString(R.string.photo_attached)
+        } else {
+            getString(R.string.no_photo_attached)
+        }
+
+        tvVideoStatus.text = if (videoExists) {
+            getString(R.string.video_attached)
+        } else {
+            getString(R.string.no_video_attached)
+        }
+
+        if (photoExists) {
+            ivPhotoPreview.visibility = View.VISIBLE
+            ivPhotoPreview.setImageURI(Uri.fromFile(File(photoPath!!)))
+            btnDeletePhoto.visibility = View.VISIBLE
+        } else {
+            ivPhotoPreview.visibility = View.GONE
+            ivPhotoPreview.setImageDrawable(null)
+            btnDeletePhoto.visibility = View.GONE
+        }
+
+        btnPreviewVideo.visibility = if (videoExists) View.VISIBLE else View.GONE
+        btnDeleteVideo.visibility = if (videoExists) View.VISIBLE else View.GONE
+    }
+
+    private fun deletePhotoEvidence() {
+        val path = photoPath
+        if (!path.isNullOrBlank()) {
+            deleteFileSafely(path)
+        }
+        photoPath = null
+        updateEvidenceStatus()
+        Toast.makeText(this, getString(R.string.photo_deleted), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteVideoEvidence() {
+        val path = videoPath
+        if (!path.isNullOrBlank()) {
+            deleteFileSafely(path)
+        }
+        videoPath = null
+        updateEvidenceStatus()
+        Toast.makeText(this, getString(R.string.video_deleted), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openPhotoPreview() {
+        val path = photoPath ?: return
+        val file = File(path)
+        if (!file.exists()) {
+            photoPath = null
+            updateEvidenceStatus()
+            return
+        }
+
+        val uri = toFileProviderUri(file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "image/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.unable_to_open_media), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openVideoPreview() {
+        val path = videoPath ?: return
+        val file = File(path)
+        if (!file.exists()) {
+            videoPath = null
+            updateEvidenceStatus()
+            return
+        }
+
+        val uri = toFileProviderUri(file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "video/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.unable_to_open_media), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -439,6 +673,8 @@ class LogIncidentActivity : AppCompatActivity() {
             hasVoiceNote = !voiceNotePath.isNullOrBlank(),
             voiceNotePath = voiceNotePath,
             voiceDurationSec = recordingSeconds,
+            photoPath = photoPath,
+            videoPath = videoPath,
             createdAtMillis = System.currentTimeMillis()
         )
 
@@ -478,6 +714,21 @@ class LogIncidentActivity : AppCompatActivity() {
         )
     }
 
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST_CODE
+        )
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -490,6 +741,17 @@ class LogIncidentActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, getString(R.string.recording_permission_required), Toast.LENGTH_LONG).show()
             }
+        } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                when (pendingCaptureAction) {
+                    PendingCaptureAction.PHOTO -> launchPhotoCapture()
+                    PendingCaptureAction.VIDEO -> launchVideoCapture()
+                    PendingCaptureAction.NONE -> Unit
+                }
+            } else {
+                Toast.makeText(this, getString(R.string.camera_permission_required), Toast.LENGTH_LONG).show()
+            }
+            pendingCaptureAction = PendingCaptureAction.NONE
         }
     }
 
@@ -508,6 +770,15 @@ class LogIncidentActivity : AppCompatActivity() {
     }
 
     private fun deleteAudioFile(path: String): Boolean {
+        return try {
+            val file = File(path)
+            file.exists() && file.delete()
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun deleteFileSafely(path: String): Boolean {
         return try {
             val file = File(path)
             file.exists() && file.delete()
