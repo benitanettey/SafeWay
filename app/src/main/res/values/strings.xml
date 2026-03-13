@@ -4,10 +4,23 @@
 
     <!-- Home Screen -->
     <string name="welcome_back">Welcome back</string>
+    <string name="welcome_text">Welcome back</string>
+    <string name="user_name_default">Thomas K.</string>
+    <string name="profile_avatar">Profile Avatar</string>
+    <string name="settings">Settings</string>
+    <string name="shield_status">Shield Active</string>
+    <string name="home">Home</string>
+    <string name="quick_actions">QUICK ACTIONS</string>
     <string name="emergency_alert">Emergency</string>
     <string name="log_incident">Log incident</string>
     <string name="my_circle">My circle</string>
     <string name="records">Records</string>
+    <string name="support_hotlines">SUPPORT HOTLINES</string>
+    <string name="police">Police</string>
+    <string name="hospital">Hospital</string>
+    <string name="amnesty">Amnesty</string>
+    <string name="counselor">Counselor</string>
+    <string name="shield_toggle">Shield Toggle</string>
 
     <!-- Shield Protection Card -->
     <string name="shield_protection">Shield protection</string>

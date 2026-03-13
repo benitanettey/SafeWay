@@ -41,6 +41,7 @@
 
     </LinearLayout>
 
+
     <!-- Scrollable Content -->
     <ScrollView
         android:id="@+id/scrollView"
@@ -49,10 +50,11 @@
         android:background="@color/secondary_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/support_circle_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -80,6 +82,7 @@
 
             </LinearLayout>
 
+
             <!-- Trusted Contacts Section Label -->
             <TextView
                 android:layout_width="match_parent"
@@ -94,239 +97,14 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="6dp" />
 
-            <!-- Contact 1 -->
+
+            <!-- Dynamic Contacts Will Appear Here -->
             <LinearLayout
+                android:id="@+id/contacts_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
+                android:orientation="vertical" />
 
-                <FrameLayout
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/avatar_background">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="JM"
-                        android:textSize="11sp"
-                        android:textColor="@color/highlight_accent"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="James Mutua"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Brother • +254 712 xxx xxx"
-                        android:textSize="12sp"
-                        android:textColor="@color/neutral_muted"
-                        android:layout_marginTop="1dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trusted"
-                        android:layout_marginBottom="4dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/primary_accent"
-                        app:chipStrokeColor="@color/primary_accent"
-                        app:chipStrokeWidth="0dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SMS alerts"
-                        android:textSize="9sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Contact 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
-
-                <FrameLayout
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/avatar_background">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="SN"
-                        android:textSize="11sp"
-                        android:textColor="@color/neutral_text"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sarah Njeri"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Friend • +254 722 xxx xxx"
-                        android:textSize="12sp"
-                        android:textColor="@color/neutral_muted"
-                        android:layout_marginTop="1dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trusted"
-                        android:layout_marginBottom="4dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/primary_accent"
-                        app:chipStrokeColor="@color/primary_accent"
-                        app:chipStrokeWidth="0dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SMS alerts"
-                        android:textSize="9sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Contact 3 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="12dp">
-
-                <FrameLayout
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/avatar_background">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="DK"
-                        android:textSize="11sp"
-                        android:textColor="@color/neutral_text"
-                        android:textStyle="bold"
-                        android:gravity="center" />
-
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dr. P. Kamau"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Counselor • +254 733 xxx xxx"
-                        android:textSize="12sp"
-                        android:textColor="@color/neutral_muted"
-                        android:layout_marginTop="1dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trusted"
-                        android:layout_marginBottom="4dp"
-                        android:textSize="11sp"
-                        app:chipBackgroundColor="@color/primary_accent"
-                        app:chipStrokeColor="@color/primary_accent"
-                        app:chipStrokeWidth="0dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SMS alerts"
-                        android:textSize="9sp"
-                        app:chipBackgroundColor="@color/card_background"
-                        app:chipStrokeColor="@color/border_dark"
-                        app:chipStrokeWidth="1dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
 
             <!-- Add Contact Button -->
             <LinearLayout
