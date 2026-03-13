@@ -161,6 +161,126 @@
 
             </LinearLayout>
 
+            <!-- Media Evidence Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/card_background"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_evidence"
+                    android:textColor="@color/section_label"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_take_photo"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_secondary_bg"
+                        android:text="@string/take_photo"
+                        android:textColor="@color/highlight_accent"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btn_take_video"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/button_secondary_bg"
+                        android:text="@string/record_video"
+                        android:textColor="@color/highlight_accent"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_photo_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/no_photo_attached"
+                    android:textColor="@color/neutral_muted"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/btn_delete_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/button_secondary_bg"
+                    android:minHeight="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/delete_photo"
+                    android:textColor="@color/emergency_red"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_video_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/no_video_attached"
+                    android:textColor="@color/neutral_muted"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/btn_delete_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/button_secondary_bg"
+                    android:minHeight="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/delete_video"
+                    android:textColor="@color/emergency_red"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_photo_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="8dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/card_background"
+                    android:contentDescription="@string/photo_preview"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_preview_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_secondary_bg"
+                    android:text="@string/preview_video"
+                    android:textColor="@color/highlight_accent"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
             <!-- What Happened Section -->
             <TextView
                 android:layout_width="wrap_content"

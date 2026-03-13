@@ -6,10 +6,15 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
     <!-- Required Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 

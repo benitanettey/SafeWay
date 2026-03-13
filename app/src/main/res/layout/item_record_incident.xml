@@ -81,10 +81,16 @@
         android:textColor="@color/neutral_text"
         android:textSize="12sp" />
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_severity"
@@ -107,7 +113,22 @@
             android:layout_height="wrap_content"
             android:textSize="11sp"
             app:chipStrokeWidth="1dp" />
-    </LinearLayout>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            app:chipStrokeWidth="1dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            app:chipStrokeWidth="1dp" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

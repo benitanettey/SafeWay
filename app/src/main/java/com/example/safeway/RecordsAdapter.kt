@@ -79,6 +79,8 @@ class RecordsAdapter(
         private val chipSeverity = itemView.findViewById<Chip>(R.id.chip_severity)
         private val chipGps = itemView.findViewById<Chip>(R.id.chip_gps)
         private val chipVoice = itemView.findViewById<Chip>(R.id.chip_voice)
+        private val chipPhoto = itemView.findViewById<Chip>(R.id.chip_photo)
+        private val chipVideo = itemView.findViewById<Chip>(R.id.chip_video)
         private val progressRing = itemView.findViewById<CircularProgressIndicator>(R.id.progress_playback_ring)
         private val btnPlay = itemView.findViewById<ImageButton>(R.id.btn_item_play)
         private val btnDetails = itemView.findViewById<Button>(R.id.btn_item_details)
@@ -109,6 +111,23 @@ class RecordsAdapter(
                 if (incident.hasVoiceNote) "Voice note" else "Timestamped",
                 isSeverity = false,
                 highlighted = incident.hasVoiceNote
+            )
+
+            val hasPhoto = !incident.photoPath.isNullOrBlank() && File(incident.photoPath).exists()
+            val hasVideo = !incident.videoPath.isNullOrBlank() && File(incident.videoPath).exists()
+
+            setupChip(
+                chipPhoto,
+                if (hasPhoto) itemView.context.getString(R.string.photo_attached) else itemView.context.getString(R.string.no_photo_attached),
+                isSeverity = false,
+                highlighted = hasPhoto
+            )
+
+            setupChip(
+                chipVideo,
+                if (hasVideo) itemView.context.getString(R.string.video_attached) else itemView.context.getString(R.string.no_video_attached),
+                isSeverity = false,
+                highlighted = hasVideo
             )
 
             val canPlay = incident.hasVoiceNote && !incident.voiceNotePath.isNullOrBlank() && File(incident.voiceNotePath).exists()
