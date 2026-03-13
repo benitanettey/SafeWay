@@ -1,3 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SafeWay</string>
+    <string name="app_name">SHIELD</string>
+
+    <!-- Home Screen -->
+    <string name="welcome_back">Welcome back</string>
+    <string name="emergency_alert">Emergency</string>
+    <string name="log_incident">Log incident</string>
+    <string name="my_circle">My circle</string>
+    <string name="records">Records</string>
+
+    <!-- Shield Protection Card -->
+    <string name="shield_protection">Shield protection</string>
+    <string name="monitoring_active">Monitoring active</string>
+    <string name="shield_description">Your records are encrypted and your circle is ready. If something happens, one tap sends your location to everyone who matters.</string>
+    <string name="shield_paused">Shield is paused. Your records are still saved. Tap the toggle to reactivate protection.</string>
+    <string name="shield_active">Active</string>
+    <string name="shield_contacts">3 contacts</string>
+    <string name="shield_offline_ready">Offline ready</string>
+
+    <!-- Emergency Alert Screen -->
+    <string name="emergency_alert_title">Emergency alert</string>
+    <string name="emergency_alert_instructions">Tap to send an SMS to your entire support circle with your GPS location and timestamp. No internet needed.</string>
+    <string name="send_alert">SEND ALERT</string>
+    <string name="your_location">Your location</string>
+    <string name="alert_goes_to">Alert goes to</string>
+    <string name="sms_preview">SMS preview</string>
+    <string name="alert_sent">Alert sent</string>
+    <string name="alert_sent_message">3 SMS messages sent with your GPS coordinates and timestamp</string>
+    <string name="done">Done</string>
+
+    <!-- Log Incident Screen -->
+    <string name="log_incident_title">Log incident</string>
+    <string name="voice_note">Voice note</string>
+    <string name="tap_to_record">Tap to record — stored encrypted</string>
+    <string name="what_happened">What happened?</string>
+    <string name="describe_incident">Describe the incident. Only you can see this...</string>
+    <string name="incident_type">Type</string>
+    <string name="severity">Severity</string>
+    <string name="location">Location</string>
+    <string name="who_optional">Who (optional)</string>
+    <string name="save_to_journal">Save to private journal</string>
+    <string name="saved_to_journal">Saved to private journal</string>
+
+    <!-- Incident Types -->
+    <string name="incident_physical">Physical</string>
+    <string name="incident_verbal">Verbal</string>
+    <string name="incident_financial">Financial</string>
+    <string name="incident_sexual">Sexual</string>
+    <string name="incident_neglect">Neglect</string>
+
+    <!-- Severity Levels -->
+    <string name="severity_low">Low</string>
+    <string name="severity_medium">Medium</string>
+    <string name="severity_high">High</string>
+    <string name="severity_crisis">Crisis</string>
+
+    <!-- Support Circle Screen -->
+    <string name="support_circle_title">Support circle</string>
+    <string name="trusted_contacts">Trusted contacts</string>
+    <string name="add_trusted_person">Add trusted person</string>
+    <string name="offline_first_message">Offline-first: Alerts sent via SMS only — no internet required. Contacts receive your GPS and timestamp the moment you trigger an alert.</string>
+
+    <!-- Records Screen -->
+    <string name="private_records_title">Private records</string>
+    <string name="export_for_legal">Export for legal use</string>
+    <string name="export_encrypted_report">Export encrypted report</string>
+
+    <!-- Add Contact Screen -->
+    <string name="add_to_circle_title">Add to circle</string>
+    <string name="full_name">Full name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="relationship">Relationship</string>
+    <string name="alert_settings">Alert settings</string>
+    <string name="receive_emergency_sms">Receive emergency SMS</string>
+    <string name="include_gps_in_alert">Include GPS in alert</string>
+    <string name="add_to_my_circle">Add to my circle</string>
+    <string name="privacy_stored_notice">Privacy: Stored only on your device, encrypted. Never contacted except when you trigger an alert.</string>
+
+    <!-- Relationship Types -->
+    <string name="relationship_family">Family</string>
+    <string name="relationship_friend">Friend</string>
+    <string name="relationship_counselor">Counselor</string>
+    <string name="relationship_doctor">Doctor</string>
+    <string name="relationship_legal_aid">Legal aid</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_log">Log</string>
+    <string name="nav_circle">Circle</string>
+    <string name="nav_records">Records</string>
+
+    <!-- Generic -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 </resources>
+
