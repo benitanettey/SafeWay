@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors - Must Be Maintained -->
+    <color name="primary_background">#0a0e14</color>
+    <color name="secondary_background">#0e1520</color>
+    <color name="card_background">#111c28</color>
+    <color name="primary_accent">#1a4a7a</color>
+    <color name="highlight_accent">#4a9ade</color>
+    <color name="neutral_text">#6a8aaa</color>
+    <color name="primary_text">#d0dde8</color>
+    <color name="neutral_muted">#2a4a6a</color>
+    <color name="emergency_red">#cc4444</color>
+    <color name="border_dark">#1e2e42</color>
+
+    <!-- Additional Text Colors -->
+    <color name="text_primary">#d0dde8</color>
+    <color name="text_secondary">#aabbcc</color>
+
+    <!-- Section Label Color -->
+    <color name="section_label">#2a4a6a</color>
+
+    <!-- Status Colors -->
+    <color name="status_active">@color/highlight_accent</color>
+    <color name="status_inactive">@color/neutral_muted</color>
 </resources>
+

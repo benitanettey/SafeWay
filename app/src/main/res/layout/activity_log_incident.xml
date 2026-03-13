@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back_log"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            android:contentDescription="@string/back"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/log_incident_title"
+            android:textSize="17sp"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/secondary_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="100dp">
+
+            <!-- Voice Recording Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/card_background"
+                android:padding="14dp"
+                android:layout_marginBottom="12dp">
+
+                <FrameLayout
+                    android:id="@+id/btn_record"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/record_button_bg">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_mic"
+                        android:tint="@color/highlight_accent"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/voice_note" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+
+                    <TextView
+                        android:id="@+id/tv_record_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/voice_note"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_record_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tap_to_record"
+                        android:textSize="11sp"
+                        android:textColor="@color/neutral_muted"
+                        android:layout_marginTop="2dp" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_waveform"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_record_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00"
+                    android:textSize="13sp"
+                    android:textColor="@color/highlight_accent"
+                    android:textStyle="bold"
+                    android:layout_marginStart="12dp" />
+
+            </LinearLayout>
+
+            <!-- What Happened Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/what_happened"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_description"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/edit_text_bg"
+                android:padding="11dp"
+                android:hint="@string/describe_incident"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/neutral_muted"
+                android:textSize="13sp"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Incident Type Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/incident_type"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_type_physical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_physical"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_type_verbal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_verbal"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_type_financial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_financial"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_type_sexual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_sexual"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_type_neglect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_neglect"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+            </LinearLayout>
+
+            <!-- Severity Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/severity"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sev_low"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/severity_low"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sev_medium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/severity_medium"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sev_high"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/severity_high"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sev_crisis"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/severity_crisis"
+                    android:layout_margin="3dp"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="@color/card_background"
+                    app:chipStrokeColor="@color/border_dark"
+                    app:chipStrokeWidth="1dp"
+                    android:checkable="true" />
+
+            </LinearLayout>
+
+            <!-- Location Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_bg"
+                android:padding="11dp"
+                android:text="Nairobi, Kenya • -1.2921, 36.8219"
+                android:textColor="@color/neutral_text"
+                android:textSize="13sp"
+                android:inputType="text"
+                android:enabled="false"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Who Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/who_optional"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_who"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_bg"
+                android:padding="11dp"
+                android:hint="Partner / Family / Colleague / Other..."
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/neutral_muted"
+                android:textSize="13sp"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/btn_save_incident"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_primary_bg"
+                android:text="@string/save_to_journal"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
