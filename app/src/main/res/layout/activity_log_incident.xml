@@ -481,8 +481,9 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_bg"
                 android:padding="11dp"
-                android:text="Nairobi, Kenya • -1.2921, 36.8219"
+                android:hint="@string/location_hint"
                 android:textColor="@color/text_primary"
+                android:textColorHint="@color/neutral_muted"
                 android:textSize="13sp"
                 android:inputType="text"
                 android:layout_marginBottom="12dp" />
