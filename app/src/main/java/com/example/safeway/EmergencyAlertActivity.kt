@@ -1,6 +1,7 @@
 package com.example.safeway
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +16,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.safeway.data.AppDatabase
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -30,9 +34,13 @@ class EmergencyAlertActivity : AppCompatActivity() {
     private lateinit var tvLocationName: TextView
     private lateinit var tvLocationCoords: TextView
     private lateinit var database: AppDatabase
+    private var currentLatitude: Double? = null
+    private var currentLongitude: Double? = null
+    private var pendingSendAfterPermissions = false
 
     companion object {
         private const val SMS_PERMISSION_REQUEST_CODE = 1001
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1002
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +52,7 @@ class EmergencyAlertActivity : AppCompatActivity() {
         initializeViews()
         setupListeners()
         loadContacts()
+        refreshLocation()
     }
 
     private fun initializeViews() {
@@ -61,11 +70,17 @@ class EmergencyAlertActivity : AppCompatActivity() {
         }
 
         btnSendSOS.setOnClickListener {
-            if (hasSmsPermission()) {
-                sendEmergencyAlert()
-            } else {
+            pendingSendAfterPermissions = true
+            if (!hasSmsPermission()) {
                 requestSmsPermission()
+                return@setOnClickListener
             }
+            if (!hasLocationPermission()) {
+                requestLocationPermission()
+                return@setOnClickListener
+            }
+
+            prepareAndSendEmergencyAlert()
         }
     }
 
@@ -134,9 +149,118 @@ class EmergencyAlertActivity : AppCompatActivity() {
 
     private fun buildAlertMessage(): String {
         val timestamp = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
-        val locationText = tvLocationCoords.text.toString().replace(" • live", "")
+        val locationText = formattedCoordinates()
+        val mapsLink = buildMapsLink()
+        val locationSection = if (locationText != null && mapsLink != null) {
+            "Location: $locationText. Map: $mapsLink."
+        } else {
+            "Location unavailable."
+        }
 
-        return "SHIELD ALERT: Thomas needs help. Location: $locationText. Time: $timestamp. Automated safety alert."
+        return "SHIELD ALERT: Thomas needs help. $locationSection Time: $timestamp. Automated safety alert."
+    }
+
+    private fun prepareAndSendEmergencyAlert() {
+        refreshLocation {
+            sendEmergencyAlert()
+        }
+    }
+
+    private fun formattedCoordinates(): String? {
+        val latitude = currentLatitude ?: return null
+        val longitude = currentLongitude ?: return null
+        return String.format(Locale.US, "%.6f, %.6f", latitude, longitude)
+    }
+
+    private fun buildMapsLink(): String? {
+        val latitude = currentLatitude ?: return null
+        val longitude = currentLongitude ?: return null
+        return String.format(Locale.US, "https://maps.google.com/?q=%.6f,%.6f", latitude, longitude)
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val fineGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        val coarseGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        return fineGranted || coarseGranted
+    }
+
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    private fun applyLocation(latitude: Double, longitude: Double) {
+        currentLatitude = latitude
+        currentLongitude = longitude
+        val formatted = String.format(Locale.US, "%.6f, %.6f", latitude, longitude)
+        tvLocationName.text = getString(R.string.current_gps_location)
+        tvLocationCoords.text = getString(R.string.live_location_format, formatted)
+        updateSmsPreview()
+    }
+
+    private fun setLocationUnavailable() {
+        currentLatitude = null
+        currentLongitude = null
+        tvLocationName.text = getString(R.string.location_unavailable_title)
+        tvLocationCoords.text = getString(R.string.location_unavailable)
+        updateSmsPreview()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun refreshLocation(onResult: (() -> Unit)? = null) {
+        if (!hasLocationPermission()) {
+            setLocationUnavailable()
+            onResult?.invoke()
+            return
+        }
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val cancellationToken = CancellationTokenSource()
+
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationToken.token)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    applyLocation(location.latitude, location.longitude)
+                    onResult?.invoke()
+                } else {
+                    fetchLastKnownLocation(fusedLocationClient, onResult)
+                }
+            }
+            .addOnFailureListener {
+                fetchLastKnownLocation(fusedLocationClient, onResult)
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun fetchLastKnownLocation(
+        fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient,
+        onResult: (() -> Unit)?
+    ) {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    applyLocation(location.latitude, location.longitude)
+                } else {
+                    setLocationUnavailable()
+                }
+                onResult?.invoke()
+            }
+            .addOnFailureListener {
+                setLocationUnavailable()
+                onResult?.invoke()
+            }
     }
 
     private fun sendEmergencyAlert() {
@@ -219,15 +343,40 @@ class EmergencyAlertActivity : AppCompatActivity() {
 
         if (requestCode == SMS_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendEmergencyAlert()
+                if (hasLocationPermission()) {
+                    prepareAndSendEmergencyAlert()
+                    pendingSendAfterPermissions = false
+                } else {
+                    requestLocationPermission()
+                }
             } else {
+                pendingSendAfterPermissions = false
                 Toast.makeText(
                     this,
                     "SMS permission is required to send an emergency alert",
                     Toast.LENGTH_LONG
                 ).show()
             }
+        } else if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (!pendingSendAfterPermissions) {
+                refreshLocation()
+                return
+            }
+
+            if (hasLocationPermission()) {
+                prepareAndSendEmergencyAlert()
+                pendingSendAfterPermissions = false
+            } else {
+                pendingSendAfterPermissions = false
+                Toast.makeText(
+                    this,
+                    getString(R.string.location_permission_required_sms),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 }
+
+
 

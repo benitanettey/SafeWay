@@ -16,11 +16,21 @@
     <string name="my_circle">My Circle</string>
     <string name="records">Records</string>
     <string name="support_hotlines">SUPPORT HOTLINES</string>
+    <string name="resources_center">RESOURCES CENTER</string>
+    <string name="resources_center_subtitle">Understand abuse, collect evidence, and find nearby help</string>
     <string name="police">Police</string>
     <string name="hospital">Hospital</string>
     <string name="amnesty">Amnesty</string>
     <string name="counselor">Counselor</string>
     <string name="shield_toggle">Shield Toggle</string>
+    <string name="panic_bubble_label">Panic bubble</string>
+    <string name="panic_bubble_subtitle">Enable floating quick actions</string>
+    <string name="overlay_enabled_message">Panic bubble enabled</string>
+    <string name="overlay_disabled_message">Panic bubble disabled</string>
+    <string name="overlay_permission_denied">Overlay permission is required to enable panic bubble</string>
+    <string name="overlay_notification_channel">Shield Overlay</string>
+    <string name="overlay_notification_title">SafeWay panic bubble is active</string>
+    <string name="overlay_notification_text">Tap the floating shield for Emergency or Log Incident.</string>
 
     <!-- Shield Protection Card -->
     <string name="shield_protection">Shield protection</string>
@@ -40,6 +50,13 @@
     <string name="sms_preview">SMS preview</string>
     <string name="alert_sent">Alert sent</string>
     <string name="alert_sent_message">3 SMS messages sent with your GPS coordinates and timestamp</string>
+    <string name="current_gps_location">Current GPS location</string>
+    <string name="live_location_format">%1$s • live</string>
+    <string name="location_unavailable_title">Location unavailable</string>
+    <string name="location_unavailable">Unable to get live GPS coordinates</string>
+    <string name="location_permission_required_sms">Location permission is required to include exact location in SOS SMS.</string>
+    <string name="sample_live_coordinates">-1.292100, 36.821900 • live</string>
+    <string name="sample_sms_preview">SHIELD ALERT: Thomas needs help. Location: -1.292100, 36.821900. Map: https://maps.google.com/?q=-1.292100,36.821900. Time: now. Automated safety alert.</string>
     <string name="done">Done</string>
 
     <!-- Log Incident Screen -->
@@ -85,6 +102,7 @@
     <string name="incident_save_failed">Could not save incident. Please try again.</string>
     <string name="who_unknown">Unknown</string>
     <string name="please_enter_location">Please enter a location</string>
+    <string name="location_hint">City, landmark, or coordinates</string>
     <string name="please_select_incident_type">Please select an incident type</string>
     <string name="please_select_severity">Please select severity</string>
     <string name="voice_note_recorded">Voice note recorded (%1$s)</string>
@@ -119,6 +137,7 @@
     <string name="support_circle_title">Support circle</string>
     <string name="trusted_contacts">Trusted contacts</string>
     <string name="add_trusted_person">Add trusted person</string>
+    <string name="add_symbol">+</string>
     <string name="offline_first_message">Offline-first: Alerts sent via SMS only — no internet required. Contacts receive your GPS and timestamp the moment you trigger an alert.</string>
 
     <!-- Records Screen -->
@@ -190,5 +209,41 @@
     <string name="pause">Pause</string>
     <string name="delete">Delete</string>
     <string name="gps_logged">GPS logged</string>
+    <string name="call">Call</string>
+    <string name="get_directions">Get Directions</string>
+
+    <!-- Resources -->
+    <string name="understand_abuse_title">Understand Abuse</string>
+    <string name="understand_abuse_intro">Purpose: recognize abuse patterns that are often ignored or dismissed.</string>
+    <string name="abuse_physical_title">Physical Abuse</string>
+    <string name="abuse_physical_description">Hitting, pushing, restraining, or any physical harm.</string>
+    <string name="abuse_verbal_title">Verbal Abuse</string>
+    <string name="abuse_verbal_description">Threats, insults, humiliation, or intimidation.</string>
+    <string name="abuse_financial_title">Financial Abuse</string>
+    <string name="abuse_financial_description">Controlling money, preventing work, or forcing financial dependence.</string>
+    <string name="abuse_sexual_title">Sexual Abuse</string>
+    <string name="abuse_sexual_description">Coercion, forced intimacy, or sexual manipulation.</string>
+    <string name="abuse_psychological_title">Psychological Abuse</string>
+    <string name="abuse_psychological_description">Gaslighting, manipulation, isolation, and control.</string>
+
+    <string name="evidence_guide_title">Evidence Guide</string>
+    <string name="evidence_guide_intro">Document incidents safely and promptly to protect your timeline and details.</string>
+    <string name="evidence_guide_steps">• Record incidents as soon as it is safe.&#10;• Save voice notes with clear details.&#10;• Include time, location, and what happened.&#10;• Do not confront the abuser while collecting evidence.&#10;• Store records in a secure private location.</string>
+    <string name="start_recording_evidence">Start Recording Evidence</string>
+
+    <string name="find_help_near_you_title">Find Help Near You</string>
+    <string name="find_help_intro">Nearby support services with quick call and directions actions.</string>
+    <string name="counseling_center">Counseling Center</string>
+    <string name="legal_aid_office">Legal Aid Office</string>
+    <string name="police_gender_desk">Police Gender Desk</string>
+
+    <string name="breaking_stigma_title">Breaking the Stigma</string>
+    <string name="breaking_stigma_intro">Men Can Be Victims Too</string>
+    <string name="breaking_stigma_body">Many men experience abuse but hesitate to speak up due to stigma and social expectations. Seeking help is not weakness. It is the first step toward safety and recovery.</string>
+    <string name="breaking_stigma_points">SafeWay helps you:&#10;• Document incidents privately&#10;• Preserve evidence securely&#10;• Reach trusted support quickly</string>
+    <string name="male_victims_stat">Many male victims never report abuse due to fear of judgment or disbelief.</string>
+
+    <string name="suggested_resources_title">Suggested Resources</string>
+    <string name="suggested_resources_subtitle">Based on your incident, these pages may help next.</string>
 </resources>
 

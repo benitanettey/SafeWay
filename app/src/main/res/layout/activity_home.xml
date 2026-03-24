@@ -287,14 +287,42 @@
 
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/shield_toggle"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_toggle_on"
-                        android:contentDescription="@string/shield_toggle"
-                        android:tint="@color/highlight_accent"
-                        android:scaleType="centerInside"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/panic_bubble_label"
+                                android:textColor="@color/text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/panic_bubble_subtitle"
+                                android:textColor="@color/neutral_text"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_overlay_bubble"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            android:contentDescription="@string/shield_toggle" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -336,14 +364,14 @@
                     android:layout_margin="6dp"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:background="@drawable/action_emergency_bg">
+                    android:background="@drawable/hotline_card_bg">
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
-                        android:src="@drawable/ic_alert"
+                        android:src="@android:drawable/ic_lock_idle_alarm"
                         android:contentDescription="@string/police"
-                        android:tint="@color/emergency_red"
+                        android:tint="@color/highlight_accent"
                         android:scaleType="centerInside"/>
 
                     <TextView
@@ -352,7 +380,7 @@
                         android:text="@string/police"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/emergency_red"
+                        android:textColor="@color/text_primary"
                         android:layout_marginTop="6dp"/>
 
                 </LinearLayout>
@@ -369,12 +397,12 @@
                     android:layout_margin="6dp"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:background="@drawable/action_log_bg">
+                    android:background="@drawable/hotline_card_bg">
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
-                        android:src="@drawable/ic_log"
+                        android:src="@android:drawable/ic_menu_compass"
                         android:contentDescription="@string/hospital"
                         android:tint="@color/highlight_accent"
                         android:scaleType="centerInside"/>
@@ -385,7 +413,7 @@
                         android:text="@string/hospital"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/highlight_accent"
+                        android:textColor="@color/text_primary"
                         android:layout_marginTop="6dp"/>
 
                 </LinearLayout>
@@ -402,14 +430,14 @@
                     android:layout_margin="6dp"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:background="@drawable/action_circle_bg">
+                    android:background="@drawable/hotline_card_bg">
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
-                        android:src="@drawable/ic_circle"
+                        android:src="@android:drawable/ic_menu_info_details"
                         android:contentDescription="@string/amnesty"
-                        android:tint="@color/neutral_text"
+                        android:tint="@color/highlight_accent"
                         android:scaleType="centerInside"/>
 
                     <TextView
@@ -418,7 +446,7 @@
                         android:text="@string/amnesty"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/neutral_text"
+                        android:textColor="@color/text_primary"
                         android:layout_marginTop="6dp"/>
 
                 </LinearLayout>
@@ -435,14 +463,14 @@
                     android:layout_margin="6dp"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:background="@drawable/action_records_bg">
+                    android:background="@drawable/hotline_card_bg">
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
-                        android:src="@drawable/ic_records"
+                        android:src="@android:drawable/ic_menu_myplaces"
                         android:contentDescription="@string/counselor"
-                        android:tint="@color/neutral_text"
+                        android:tint="@color/highlight_accent"
                         android:scaleType="centerInside"/>
 
                     <TextView
@@ -451,12 +479,76 @@
                         android:text="@string/counselor"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/neutral_text"
+                        android:textColor="@color/text_primary"
                         android:layout_marginTop="6dp"/>
 
                 </LinearLayout>
 
             </GridLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resources_center"
+                android:textSize="10sp"
+                android:textColor="@color/section_label"
+                android:letterSpacing="0.15"
+                android:textStyle="bold"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp" />
+
+            <LinearLayout
+                android:id="@+id/btn_resources_center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/card_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/resources_center"
+                    android:src="@android:drawable/ic_menu_agenda"
+                    android:tint="@color/highlight_accent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resources_center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/resources_center_subtitle"
+                        android:textColor="@color/neutral_text"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/resources_center"
+                    android:src="@android:drawable/ic_media_next"
+                    android:tint="@color/neutral_text" />
+            </LinearLayout>
 
         </LinearLayout>
 

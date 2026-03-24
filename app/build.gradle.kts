@@ -51,6 +51,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     // ROOM DATABASE
     implementation(libs.androidx.room.runtime)

@@ -690,6 +690,8 @@ class LogIncidentActivity : AppCompatActivity() {
                     getString(R.string.incident_saved_success)
                 }
                 Toast.makeText(this@LogIncidentActivity, successMessage, Toast.LENGTH_SHORT).show()
+                val destination = ResourceRecommendationEngine.primaryDestinationFor(selectedType)
+                openSuggestedResource(destination)
                 finish()
             } catch (_: Exception) {
                 btnSave.text = getString(R.string.save_to_journal)
@@ -697,6 +699,16 @@ class LogIncidentActivity : AppCompatActivity() {
                 Toast.makeText(this@LogIncidentActivity, getString(R.string.incident_save_failed), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun openSuggestedResource(destination: ResourceDestination) {
+        val targetActivity = when (destination) {
+            ResourceDestination.UNDERSTAND_ABUSE -> UnderstandAbuseActivity::class.java
+            ResourceDestination.EVIDENCE_GUIDE -> EvidenceGuideActivity::class.java
+            ResourceDestination.FIND_HELP_NEARBY -> FindHelpNearYouActivity::class.java
+            ResourceDestination.BREAK_STIGMA -> BreakingStigmaActivity::class.java
+        }
+        startActivity(Intent(this, targetActivity))
     }
 
     private fun hasRecordAudioPermission(): Boolean {

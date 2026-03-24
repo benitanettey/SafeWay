@@ -130,7 +130,7 @@
                     android:id="@+id/tv_location_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nairobi, Kenya"
+                    android:text="@string/current_gps_location"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="-1.2921, 36.8219 • live"
+                    android:text="@string/sample_live_coordinates"
                     android:textColor="@color/highlight_accent"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -193,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:lineHeight="18sp"
-                    android:text="SHIELD ALERT: Thomas needs help. Location: -1.2921, 36.8219. Time: now. Automated safety alert."
+                    android:text="@string/sample_sms_preview"
                     android:textColor="@color/neutral_text"
                     android:textSize="12sp" />
             </LinearLayout>

@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
@@ -330,6 +331,11 @@ class RecordsActivity : AppCompatActivity() {
             .setView(view)
             .setNegativeButton(getString(R.string.cancel), null)
             .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                ?.setTextColor(ContextCompat.getColor(this, R.color.neutral_text))
+        }
 
         btnPhoto.setOnClickListener {
             openMediaFromPath(incident.photoPath, "image/*")

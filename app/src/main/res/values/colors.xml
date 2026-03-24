@@ -22,5 +22,15 @@
     <!-- Status Colors -->
     <color name="status_active">@color/highlight_accent</color>
     <color name="status_inactive">@color/neutral_muted</color>
+
+    <!-- Hotline Cards -->
+    <color name="hotline_card_background">#101a26</color>
+    <color name="hotline_card_border">#2b3d52</color>
+
+    <!-- Button Tokens -->
+    <color name="button_primary_fill">@color/primary_accent</color>
+    <color name="button_primary_stroke">#2a6aaa</color>
+    <color name="button_secondary_fill">#102033</color>
+    <color name="button_secondary_stroke">#2d547a</color>
 </resources>
 

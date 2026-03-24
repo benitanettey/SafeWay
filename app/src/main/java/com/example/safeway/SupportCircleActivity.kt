@@ -2,6 +2,7 @@ package com.example.safeway
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -84,19 +85,20 @@ class SupportCircleActivity : AppCompatActivity() {
     private fun createContactCard(contact: Contact): LinearLayout {
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
             setBackgroundResource(R.drawable.card_background)
-            setPadding(12, 12, 12, 12)
+            setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx())
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                bottomMargin = 8
+                bottomMargin = 8.dpToPx()
             }
         }
 
         // Avatar
         val avatar = FrameLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(42, 42)
+            layoutParams = LinearLayout.LayoutParams(42.dpToPx(), 42.dpToPx())
             setBackgroundResource(R.drawable.avatar_background)
         }
 
@@ -112,7 +114,7 @@ class SupportCircleActivity : AppCompatActivity() {
         val infoLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setPadding(12, 0, 0, 0)
+            setPadding(12.dpToPx(), 0, 0, 0)
         }
 
         val name = TextView(this).apply {
@@ -134,12 +136,17 @@ class SupportCircleActivity : AppCompatActivity() {
         // Status Layout
         val statusLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                marginEnd = 8.dpToPx()
+            }
         }
 
         val statusChip = com.google.android.material.chip.Chip(this).apply {
             text = if (contact.smsAlerts) "SMS alerts" else "Disabled"
-            textSize = 10f
+            textSize = 11f
             isClickable = false
             isCheckable = false
             chipBackgroundColor = ContextCompat.getColorStateList(
@@ -151,7 +158,7 @@ class SupportCircleActivity : AppCompatActivity() {
                 R.color.border_dark
             )
             chipStrokeWidth = 1f
-            chipCornerRadius = 12f
+            setEnsureMinTouchTargetSize(false)
         }
 
         statusLayout.addView(statusChip)
@@ -159,9 +166,13 @@ class SupportCircleActivity : AppCompatActivity() {
         // Delete Button
         val deleteBtn = Button(this).apply {
             text = "Remove"
-            textSize = 10f
+            textSize = 11f
+            minHeight = 36.dpToPx()
+            setPadding(12.dpToPx(), 6.dpToPx(), 12.dpToPx(), 6.dpToPx())
+            setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.emergency_red))
+            background = ContextCompat.getDrawable(this@SupportCircleActivity, R.drawable.button_secondary_bg)
             setOnClickListener {
-                AlertDialog.Builder(this@SupportCircleActivity)
+                val dialog = AlertDialog.Builder(this@SupportCircleActivity)
                     .setTitle("Remove Contact")
                     .setMessage("Remove ${contact.name} from your support circle?")
                     .setPositiveButton("Remove") { _, _ ->
@@ -171,9 +182,19 @@ class SupportCircleActivity : AppCompatActivity() {
                         }
                     }
                     .setNegativeButton("Cancel", null)
-                    .show()
+                    .create()
+                dialog.setOnShowListener {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                        ?.setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.emergency_red))
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                        ?.setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.highlight_accent))
+                }
+                dialog.show()
             }
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
         }
 
         card.addView(avatar)
@@ -193,7 +214,7 @@ class SupportCircleActivity : AppCompatActivity() {
         val relationInput = view.findViewById<EditText>(R.id.input_relationship)
         val smsAlertsCheckbox = view.findViewById<CheckBox>(R.id.checkbox_sms_alerts)
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Add Trusted Contact")
             .setView(view)
             .setPositiveButton("Add") { _, _ ->
@@ -216,7 +237,19 @@ class SupportCircleActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("Cancel", null)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                ?.setTextColor(ContextCompat.getColor(this, R.color.highlight_accent))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                ?.setTextColor(ContextCompat.getColor(this, R.color.neutral_text))
+        }
+        dialog.show()
     }
+
+    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 }
+
+
 

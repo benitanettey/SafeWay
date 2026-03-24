@@ -2,19 +2,29 @@ package com.example.safeway
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.widget.ImageView
+import android.provider.Settings
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.safeway.overlay.OverlayPrefs
+import com.example.safeway.overlay.ShieldOverlayService
 
 class HomeActivity : AppCompatActivity() {
 
-    private var shieldEnabled = true
+    private var shieldEnabled = false
+    private var pendingOverlayPermissionRequest = false
+    private lateinit var overlaySwitch: SwitchCompat
+    private var isUpdatingSwitchState = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        shieldEnabled = OverlayPrefs.isEnabled(this)
 
         setupQuickActions()
         setupBottomNavigation()
@@ -22,11 +32,31 @@ class HomeActivity : AppCompatActivity() {
         setupShieldToggle()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (pendingOverlayPermissionRequest) {
+            pendingOverlayPermissionRequest = false
+            if (canDrawOverlays()) {
+                enableOverlay()
+            } else {
+                disableOverlay(showToast = true)
+                Toast.makeText(this, getString(R.string.overlay_permission_denied), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            val enabled = OverlayPrefs.isEnabled(this)
+            updateShieldToggleUi(enabled)
+            if (enabled && canDrawOverlays()) {
+                startOverlayService()
+            }
+        }
+    }
+
     private fun setupQuickActions() {
         val btnEmergency = findViewById<LinearLayout>(R.id.btn_emergency)
         val btnLogIncident = findViewById<LinearLayout>(R.id.btn_log_incident)
         val btnMyCircle = findViewById<LinearLayout>(R.id.btn_my_circle)
         val btnRecords = findViewById<LinearLayout>(R.id.btn_records)
+        val btnResourcesCenter = findViewById<LinearLayout>(R.id.btn_resources_center)
 
         btnEmergency.setOnClickListener {
             startActivity(Intent(this, EmergencyAlertActivity::class.java))
@@ -42,6 +72,10 @@ class HomeActivity : AppCompatActivity() {
 
         btnRecords.setOnClickListener {
             startActivity(Intent(this, RecordsActivity::class.java))
+        }
+
+        btnResourcesCenter.setOnClickListener {
+            startActivity(Intent(this, ResourcesActivity::class.java))
         }
     }
 
@@ -92,18 +126,70 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupShieldToggle() {
-        val shieldToggle = findViewById<ImageView>(R.id.shield_toggle)
+        overlaySwitch = findViewById(R.id.switch_overlay_bubble)
+        updateShieldToggleUi(shieldEnabled)
 
-        shieldToggle.setOnClickListener {
-            shieldEnabled = !shieldEnabled
+        overlaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isUpdatingSwitchState) return@setOnCheckedChangeListener
+
             if (shieldEnabled) {
-                shieldToggle.setImageResource(R.drawable.ic_toggle_on)
-                Toast.makeText(this, "Shield protection activated", Toast.LENGTH_SHORT).show()
+                disableOverlay(showToast = true)
             } else {
-                shieldToggle.setImageResource(R.drawable.ic_toggle_off)
-                Toast.makeText(this, "Shield protection paused", Toast.LENGTH_SHORT).show()
+                if (canDrawOverlays()) {
+                    enableOverlay()
+                } else {
+                    updateShieldToggleUi(false)
+                    requestOverlayPermission()
+                }
             }
         }
+    }
+
+    private fun enableOverlay() {
+        OverlayPrefs.setEnabled(this, true)
+        shieldEnabled = true
+        updateShieldToggleUi(true)
+        startOverlayService()
+        Toast.makeText(this, getString(R.string.overlay_enabled_message), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun disableOverlay(showToast: Boolean) {
+        OverlayPrefs.setEnabled(this, false)
+        shieldEnabled = false
+        updateShieldToggleUi(false)
+        stopService(Intent(this, ShieldOverlayService::class.java))
+        if (showToast) {
+            Toast.makeText(this, getString(R.string.overlay_disabled_message), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateShieldToggleUi(enabled: Boolean) {
+        shieldEnabled = enabled
+        isUpdatingSwitchState = true
+        overlaySwitch.isChecked = enabled
+        isUpdatingSwitchState = false
+    }
+
+    private fun requestOverlayPermission() {
+        pendingOverlayPermissionRequest = true
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:$packageName")
+        )
+        startActivity(intent)
+    }
+
+    private fun canDrawOverlays(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else {
+            true
+        }
+    }
+
+    private fun startOverlayService() {
+        val serviceIntent = Intent(this, ShieldOverlayService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     private fun callNumber(number: String) {
