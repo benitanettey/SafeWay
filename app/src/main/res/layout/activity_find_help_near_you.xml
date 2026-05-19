@@ -58,47 +58,54 @@
                 android:layout_height="wrap_content"
                 android:text="@string/find_help_intro"
                 android:textColor="@color/neutral_text"
-                android:textSize="13sp"
-                android:lineHeight="18sp"
-                android:layout_marginBottom="10dp" />
+                android:textSize="14sp"
+                android:lineHeight="20sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hospital"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <Button
                         android:id="@+id/btn_call_hospital"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/call"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/highlight_accent" />
                     <Button
                         android:id="@+id/btn_directions_hospital"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_primary_bg"
                         android:text="@string/get_directions"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>
@@ -108,38 +115,44 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/counseling_center"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <Button
                         android:id="@+id/btn_call_counseling"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/call"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/highlight_accent" />
                     <Button
                         android:id="@+id/btn_directions_counseling"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_primary_bg"
                         android:text="@string/get_directions"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>
@@ -149,38 +162,44 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/legal_aid_office"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <Button
                         android:id="@+id/btn_call_legal_aid"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/call"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/highlight_accent" />
                     <Button
                         android:id="@+id/btn_directions_legal_aid"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_primary_bg"
                         android:text="@string/get_directions"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>
@@ -190,38 +209,44 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="20dp">
+                android:padding="16dp"
+                android:layout_marginBottom="24dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/police_gender_desk"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="horizontal">
                     <Button
                         android:id="@+id/btn_call_police"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/call"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/highlight_accent" />
                     <Button
                         android:id="@+id/btn_directions_police"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_primary_bg"
                         android:text="@string/get_directions"
                         android:textAllCaps="false"
+                        android:textSize="13sp"
                         android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>

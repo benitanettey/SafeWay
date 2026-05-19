@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="4dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/card_background"
     android:orientation="vertical"
-    android:padding="14dp">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/text_primary"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -32,26 +32,26 @@
             android:orientation="vertical">
 
             <FrameLayout
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:foregroundGravity="center">
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/progress_playback_ring"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:indicatorColor="@color/highlight_accent"
                     app:indicatorInset="0dp"
-                    app:indicatorSize="40dp"
+                    app:indicatorSize="44dp"
                     app:trackColor="@color/border_dark"
                     app:trackThickness="2dp" />
 
                 <ImageButton
                     android:id="@+id/btn_item_play"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:background="@drawable/record_button_bg"
                     android:contentDescription="@string/play_voice_note_preview"
@@ -62,11 +62,12 @@
 
             <TextView
                 android:id="@+id/tv_record_time"
-                android:layout_width="56dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/neutral_muted"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -77,9 +78,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="12dp"
         android:textColor="@color/neutral_text"
-        android:textSize="12sp" />
+        android:textSize="13sp"
+        android:lineSpacingMultiplier="1.4"
+        android:maxLines="3"
+        android:ellipsize="end" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -133,7 +137,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -141,10 +145,13 @@
             android:id="@+id/btn_item_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="36dp"
             android:background="@drawable/button_secondary_bg"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:text="@string/view_details"
             android:textColor="@color/highlight_accent"
-            android:textSize="11sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
 </LinearLayout>

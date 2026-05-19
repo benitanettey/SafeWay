@@ -1,50 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="24dp">
 
-    <EditText
-        android:id="@+id/input_name"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Full Name"
-        android:inputType="text"
-        android:textColor="@color/text_primary"
-        android:textColorHint="@color/neutral_muted"
-        android:paddingBottom="12dp" />
+        android:hint="@string/full_name"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp">
 
-    <EditText
-        android:id="@+id/input_phone"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/neutral_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        android:textColor="@color/text_primary"
-        android:textColorHint="@color/neutral_muted"
-        android:paddingBottom="12dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="12dp"
+        android:hint="@string/phone_number"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp">
 
-    <EditText
-        android:id="@+id/input_relationship"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:minHeight="48dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/neutral_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Relationship (e.g. Brother, Friend)"
-        android:inputType="text"
-        android:textColor="@color/text_primary"
-        android:textColorHint="@color/neutral_muted"
-        android:paddingBottom="12dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="12dp"
+        android:hint="@string/relationship"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp">
 
-    <CheckBox
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_relationship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/neutral_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/checkbox_sms_alerts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enable SMS Alerts"
+        android:text="@string/receive_emergency_sms"
         android:textColor="@color/text_primary"
+        android:textSize="14sp"
         android:checked="true"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>
-

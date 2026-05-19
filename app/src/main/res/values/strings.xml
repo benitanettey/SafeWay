@@ -245,5 +245,19 @@
 
     <string name="suggested_resources_title">Suggested Resources</string>
     <string name="suggested_resources_subtitle">Based on your incident, these pages may help next.</string>
+
+    <!-- Custom Hotlines -->
+    <string name="my_hotlines">MY HOTLINES</string>
+    <string name="add_hotline">Add Hotline</string>
+    <string name="add_hotline_title">Add Custom Hotline</string>
+    <string name="hotline_name_hint">Hotline name</string>
+    <string name="hotline_phone_hint">Phone number</string>
+    <string name="delete_hotline">Delete hotline</string>
+    <string name="delete_hotline_confirm">Delete %s?</string>
+    <string name="delete_hotline_message">Are you sure you want to remove this hotline?</string>
+    <string name="hotline_name_required">Please enter a name</string>
+    <string name="hotline_phone_required">Please enter a phone number</string>
+    <string name="hotline_added">Hotline added</string>
+    <string name="hotline_deleted">Hotline removed</string>
 </resources>
 

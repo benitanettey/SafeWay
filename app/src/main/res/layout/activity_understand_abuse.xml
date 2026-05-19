@@ -58,17 +58,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/understand_abuse_intro"
                 android:textColor="@color/neutral_text"
-                android:textSize="13sp"
-                android:lineHeight="18sp"
-                android:layout_marginBottom="10dp" />
+                android:textSize="14sp"
+                android:lineHeight="20sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -76,24 +77,27 @@
                     android:text="@string/abuse_physical_title"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/abuse_physical_description"
                     android:textColor="@color/neutral_text"
-                    android:textSize="12sp" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4" />
 
                 <Button
                     android:id="@+id/btn_log_physical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/log_incident"
                     android:textAllCaps="false"
+                    android:textSize="13sp"
                     android:textColor="@color/highlight_accent" />
             </LinearLayout>
 
@@ -102,8 +106,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -111,24 +115,27 @@
                     android:text="@string/abuse_verbal_title"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/abuse_verbal_description"
                     android:textColor="@color/neutral_text"
-                    android:textSize="12sp" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4" />
 
                 <Button
                     android:id="@+id/btn_log_verbal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/log_incident"
                     android:textAllCaps="false"
+                    android:textSize="13sp"
                     android:textColor="@color/highlight_accent" />
             </LinearLayout>
 
@@ -137,8 +144,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -146,24 +153,27 @@
                     android:text="@string/abuse_financial_title"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/abuse_financial_description"
                     android:textColor="@color/neutral_text"
-                    android:textSize="12sp" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4" />
 
                 <Button
                     android:id="@+id/btn_log_financial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/log_incident"
                     android:textAllCaps="false"
+                    android:textSize="13sp"
                     android:textColor="@color/highlight_accent" />
             </LinearLayout>
 
@@ -172,8 +182,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -181,24 +191,27 @@
                     android:text="@string/abuse_sexual_title"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/abuse_sexual_description"
                     android:textColor="@color/neutral_text"
-                    android:textSize="12sp" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4" />
 
                 <Button
                     android:id="@+id/btn_log_sexual"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/log_incident"
                     android:textAllCaps="false"
+                    android:textSize="13sp"
                     android:textColor="@color/highlight_accent" />
             </LinearLayout>
 
@@ -207,8 +220,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/card_background"
-                android:padding="12dp"
-                android:layout_marginBottom="20dp">
+                android:padding="16dp"
+                android:layout_marginBottom="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -216,24 +229,27 @@
                     android:text="@string/abuse_psychological_title"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="6dp"
                     android:text="@string/abuse_psychological_description"
                     android:textColor="@color/neutral_text"
-                    android:textSize="12sp" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4" />
 
                 <Button
                     android:id="@+id/btn_log_psychological"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:minHeight="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/log_incident"
                     android:textAllCaps="false"
+                    android:textSize="13sp"
                     android:textColor="@color/highlight_accent" />
             </LinearLayout>
 

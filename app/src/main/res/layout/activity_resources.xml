@@ -56,17 +56,18 @@
             <LinearLayout
                 android:id="@+id/card_understand_abuse"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
+                android:minHeight="130dp"
                 android:layout_margin="6dp"
                 android:background="@drawable/card_background"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="20dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:contentDescription="@string/understand_abuse_title"
                     android:src="@android:drawable/ic_menu_help"
                     app:tint="@color/highlight_accent" />
@@ -74,27 +75,30 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/understand_abuse_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/card_evidence_guide"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
+                android:minHeight="130dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/card_background"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="20dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:contentDescription="@string/evidence_guide_title"
                     android:src="@drawable/ic_mic"
                     app:tint="@color/highlight_accent" />
@@ -102,27 +106,30 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/evidence_guide_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/card_find_help_nearby"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
+                android:minHeight="130dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/card_background"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="20dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:contentDescription="@string/find_help_near_you_title"
                     android:src="@android:drawable/ic_menu_mylocation"
                     app:tint="@color/highlight_accent" />
@@ -130,27 +137,30 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/find_help_near_you_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/card_break_stigma"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
+                android:minHeight="130dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/card_background"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="20dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:contentDescription="@string/breaking_stigma_title"
                     android:src="@android:drawable/ic_menu_info_details"
                     app:tint="@color/highlight_accent" />
@@ -158,11 +168,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/breaking_stigma_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textAlignment="center" />
             </LinearLayout>
 
         </GridLayout>

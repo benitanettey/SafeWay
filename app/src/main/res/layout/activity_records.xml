@@ -66,11 +66,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#0a1a2a"
-                android:padding="12dp"
+                android:background="@color/card_background"
+                android:padding="14dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="12dp">
 
                 <View
                     android:layout_width="8dp"
@@ -107,10 +107,14 @@
                     android:background="@drawable/edit_text_bg"
                     android:hint="@string/search_records_hint"
                     android:inputType="text"
-                    android:padding="10dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    android:minHeight="48dp"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/neutral_muted"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -152,10 +156,12 @@
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="12dp"
                 android:background="@drawable/card_background"
-                android:padding="14dp"
+                android:padding="20dp"
+                android:gravity="center"
                 android:text="@string/no_records_yet"
                 android:textColor="@color/neutral_text"
-                android:textSize="12sp" />
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.4" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_records"
@@ -190,9 +196,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/export_for_legal"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textColor="@color/section_label"
-                    android:letterSpacing="0.15"
+                    android:letterSpacing="0.12"
                     android:textStyle="bold"
                     android:layout_marginBottom="6dp" />
 
@@ -200,9 +206,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/export_legal_description"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textColor="@color/neutral_text"
-                    android:layout_marginBottom="10dp" />
+                    android:lineSpacingMultiplier="1.4"
+                    android:layout_marginBottom="12dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,10 +221,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/export_csv"
                         android:textColor="@color/highlight_accent"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <Button
@@ -225,11 +234,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/export_pdf"
                         android:textColor="@color/highlight_accent"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <Button
@@ -237,11 +248,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/export_encrypted"
                         android:textColor="@color/highlight_accent"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
