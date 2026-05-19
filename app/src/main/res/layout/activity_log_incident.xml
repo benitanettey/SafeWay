@@ -175,8 +175,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/add_evidence"
                     android:textColor="@color/section_label"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.12" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -187,23 +188,27 @@
                     <Button
                         android:id="@+id/btn_take_photo"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/take_photo"
                         android:textColor="@color/highlight_accent"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
 
                     <Button
                         android:id="@+id/btn_take_video"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
+                        android:gravity="center"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_secondary_bg"
                         android:text="@string/record_video"
                         android:textColor="@color/highlight_accent"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
@@ -221,15 +226,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/button_secondary_bg"
-                    android:minHeight="0dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
+                    android:minHeight="36dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
                     android:text="@string/delete_photo"
                     android:textColor="@color/emergency_red"
                     android:textAllCaps="false"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:visibility="gone" />
 
                 <TextView
@@ -247,15 +250,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/button_secondary_bg"
-                    android:minHeight="0dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
+                    android:minHeight="36dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
                     android:text="@string/delete_video"
                     android:textColor="@color/emergency_red"
                     android:textAllCaps="false"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:visibility="gone" />
 
                 <ImageView
@@ -272,7 +273,8 @@
                 <Button
                     android:id="@+id/btn_preview_video"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="40dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/button_secondary_bg"
                     android:text="@string/preview_video"
@@ -286,36 +288,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/what_happened"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="@color/section_label"
-                android:letterSpacing="0.15"
+                android:letterSpacing="0.12"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/et_description"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:background="@drawable/edit_text_bg"
-                android:padding="11dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
                 android:hint="@string/describe_incident"
                 android:gravity="top|start"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/neutral_muted"
-                android:textSize="13sp"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.4"
                 android:inputType="textMultiLine"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="16dp" />
 
             <!-- Incident Type Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/incident_type"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="@color/section_label"
-                android:letterSpacing="0.15"
+                android:letterSpacing="0.12"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -398,11 +404,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/severity"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="@color/section_label"
-                android:letterSpacing="0.15"
+                android:letterSpacing="0.12"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -469,48 +475,56 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/location"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="@color/section_label"
-                android:letterSpacing="0.15"
+                android:letterSpacing="0.12"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/et_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_bg"
-                android:padding="11dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:minHeight="48dp"
                 android:hint="@string/location_hint"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/neutral_muted"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:inputType="text"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="16dp" />
 
             <!-- Who Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/who_optional"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="@color/section_label"
-                android:letterSpacing="0.15"
+                android:letterSpacing="0.12"
                 android:textStyle="bold"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
             <EditText
                 android:id="@+id/et_who"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_bg"
-                android:padding="11dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:minHeight="48dp"
                 android:hint="@string/who_hint"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/neutral_muted"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:inputType="text"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="24dp" />
 
             <!-- Save Button -->
             <Button
