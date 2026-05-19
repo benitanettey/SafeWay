@@ -3,17 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
-    android:layout_marginBottom="10dp"
-    android:background="@drawable/card_background"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/card_elevated_background"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
+    <!-- Title & Timestamp Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
@@ -22,140 +21,170 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/text_primary"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_record_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:foregroundGravity="center">
-
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:id="@+id/progress_playback_ring"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    app:indicatorColor="@color/highlight_accent"
-                    app:indicatorInset="0dp"
-                    app:indicatorSize="44dp"
-                    app:trackColor="@color/border_dark"
-                    app:trackThickness="2dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_item_play"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/record_button_bg"
-                    android:contentDescription="@string/play_voice_note_preview"
-                    android:padding="0dp"
-                    android:src="@drawable/ic_play"
-                    app:tint="@color/highlight_accent" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tv_record_time"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="@color/neutral_muted"
-                android:textSize="11sp" />
-        </LinearLayout>
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/neutral_text"
+            android:textSize="12sp" />
     </LinearLayout>
 
+    <!-- Description -->
     <TextView
         android:id="@+id/tv_record_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
-        android:textColor="@color/neutral_text"
+        android:textColor="@color/text_secondary"
         android:textSize="13sp"
-        android:lineSpacingMultiplier="1.4"
-        android:maxLines="3"
+        android:lineSpacingMultiplier="1.5"
+        android:maxLines="4"
         android:ellipsize="end" />
 
+    <!-- Chips Row -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:overScrollMode="never"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_severity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            app:chipStrokeWidth="1dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_severity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:layout_marginEnd="6dp"
+                app:chipStrokeWidth="1dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_gps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gps_logged"
-            android:textSize="11sp"
-            app:chipStrokeWidth="1dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_gps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gps_logged"
+                android:textSize="10sp"
+                android:layout_marginEnd="6dp"
+                app:chipStrokeWidth="1dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_voice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            app:chipStrokeWidth="1dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:layout_marginEnd="6dp"
+                app:chipStrokeWidth="1dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            app:chipStrokeWidth="1dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:layout_marginEnd="6dp"
+                app:chipStrokeWidth="1dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            app:chipStrokeWidth="1dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                app:chipStrokeWidth="1dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
+    <!-- Playback Waveform (visible only during playback) -->
+    <LinearLayout
+        android:id="@+id/ll_item_waveform"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_dark"
+        android:layout_marginVertical="12dp" />
+
+    <!-- Bottom Actions Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="end"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <!-- Play Button with Progress Ring -->
+        <FrameLayout
+            android:id="@+id/container_item_play"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_playback_ring"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:indicatorColor="@color/highlight_accent"
+                app:indicatorInset="0dp"
+                app:indicatorSize="48dp"
+                app:trackColor="@color/border_dark"
+                app:trackThickness="2dp" />
+
+            <ImageButton
+                android:id="@+id/btn_item_play"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center"
+                android:background="@drawable/record_button_bg"
+                android:contentDescription="@string/play_voice_note_preview"
+                android:padding="0dp"
+                android:src="@drawable/ic_play"
+                android:tint="@color/highlight_accent" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_item_playback_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/neutral_text"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/btn_item_details"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="36dp"
+            android:layout_height="38dp"
             android:background="@drawable/button_secondary_bg"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
+            android:gravity="center"
+            android:minHeight="38dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="@string/view_details"
             android:textColor="@color/highlight_accent"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>
-
-
-
-

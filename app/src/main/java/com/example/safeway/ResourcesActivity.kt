@@ -12,22 +12,31 @@ class ResourcesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_resources)
 
-        findViewById<ImageButton>(R.id.btn_back_resources).setOnClickListener { finish() }
+        BottomNavHelper.setup(this, NavTab.HOME)
+
+        findViewById<ImageButton>(R.id.btn_back_resources).setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
+        }
 
         findViewById<LinearLayout>(R.id.card_understand_abuse).setOnClickListener {
             startActivity(Intent(this, UnderstandAbuseActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         findViewById<LinearLayout>(R.id.card_evidence_guide).setOnClickListener {
             startActivity(Intent(this, EvidenceGuideActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         findViewById<LinearLayout>(R.id.card_find_help_nearby).setOnClickListener {
             startActivity(Intent(this, FindHelpNearYouActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         findViewById<LinearLayout>(R.id.card_break_stigma).setOnClickListener {
             startActivity(Intent(this, BreakingStigmaActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
     }
 }

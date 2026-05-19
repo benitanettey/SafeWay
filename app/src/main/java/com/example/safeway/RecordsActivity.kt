@@ -1,6 +1,7 @@
 package com.example.safeway
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -68,6 +70,11 @@ class RecordsActivity : AppCompatActivity() {
     private var pausedPositionMs: Int = 0
     private val playbackUiHandler = Handler(Looper.getMainLooper())
 
+    // Detail dialog state
+    private var detailDialog: Dialog? = null
+    private var waveformPlaybackSeed = 0
+    private var isDetailDialogPlaying = false
+
     private val playbackUiRunnable = object : Runnable {
         override fun run() {
             if (!isPlaybackRunning) return
@@ -79,9 +86,73 @@ class RecordsActivity : AppCompatActivity() {
                 val positionMs = player.currentPosition.coerceAtLeast(0)
                 val progress = ((positionMs * 100f) / durationMs).toInt().coerceIn(0, 100)
                 val label = formatDurationFromMillis(positionMs)
-                adapter.setPlaybackState(incidentId, true, progress, label)
-                playbackUiHandler.postDelayed(this, 250)
+                val durationLabel = formatDurationFromMillis(durationMs)
+
+                val severity = currentIncidents.find { it.id == incidentId }?.severity ?: "Medium"
+                val bars = generateWaveformBars(progress, severity)
+
+                adapter.setPlaybackState(incidentId, true, progress, label, durationLabel)
+                adapter.updatePlaybackWaveform(bars)
+
+                // Update detail dialog waveform if showing
+                if (detailDialog?.isShowing == true && isDetailDialogPlaying) {
+                    updateDetailDialogWaveform(bars)
+                    updateDetailDialogPlayButton(true)
+                }
+
+                waveformPlaybackSeed++
+                playbackUiHandler.postDelayed(this, 200)
             }
+        }
+    }
+
+    private fun generateWaveformBars(progressSeed: Int, severity: String): List<Int> {
+        val bars = mutableListOf<Int>()
+        val barCount = 35
+        val baseHeight = when {
+            severity.equals("Low", true) -> 10
+            severity.equals("Crisis", true) -> 18
+            else -> 14
+        }
+        for (i in 0 until barCount) {
+            val pos = (i.toFloat() / barCount) * 100f
+            val wave = (Math.sin((pos + progressSeed * 4) * 0.08) * 0.5 + 0.5)
+            val wave2 = (Math.sin((pos + progressSeed * 2) * 0.15) * 0.3)
+            val noise = (Math.sin((i * 137.0 + progressSeed * 73.0)) * 0.15 + 0.15)
+            val height = ((wave + wave2 + noise) * baseHeight + 4f).toInt().coerceIn(4, 32)
+            bars.add(height)
+        }
+        return bars
+    }
+
+    private fun updateDetailDialogWaveform(bars: List<Int>) {
+        val dialog = detailDialog ?: return
+        val waveformContainer = dialog.findViewById<LinearLayout>(R.id.ll_detail_waveform) ?: return
+        waveformContainer.removeAllViews()
+        val density = resources.displayMetrics.density
+        for (heightDp in bars) {
+            val bar = View(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    (4 * density).toInt(),
+                    (heightDp * density).toInt()
+                ).apply {
+                    setMargins(2, 0, 2, 0)
+                    gravity = android.view.Gravity.BOTTOM
+                }
+                setBackgroundColor(getColor(R.color.highlight_accent))
+                alpha = 0.5f + (heightDp.toFloat() / 32f) * 0.5f
+            }
+            waveformContainer.addView(bar)
+        }
+    }
+
+    private fun updateDetailDialogPlayButton(isPlaying: Boolean) {
+        val dialog = detailDialog ?: return
+        val btnPlay = dialog.findViewById<Button>(R.id.btn_detail_play) ?: return
+        val tvTime = dialog.findViewById<TextView>(R.id.tv_detail_playback_time) ?: return
+        btnPlay.text = if (isPlaying) getString(R.string.pause) else getString(R.string.play)
+        if (isPlaying && mediaPlayer != null) {
+            tvTime.text = "${formatDurationFromMillis(mediaPlayer!!.currentPosition)} / ${formatDurationFromMillis(mediaPlayer!!.duration)}"
         }
     }
 
@@ -101,6 +172,7 @@ class RecordsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_records)
         database = AppDatabase.getDatabase(this)
 
+        BottomNavHelper.setup(this, NavTab.RECORDS)
         initializeViews()
         setupRecycler()
         setupListeners()
@@ -134,12 +206,13 @@ class RecordsActivity : AppCompatActivity() {
         )
         recordsRecycler.layoutManager = LinearLayoutManager(this)
         recordsRecycler.adapter = adapter
-        adapter.setPlaybackState(null, false, 0, null)
+        adapter.setPlaybackState(null, false, 0, null, null)
     }
 
     private fun setupListeners() {
         btnBack.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
         }
 
         btnExportCsv.setOnClickListener { exportAndShareRecords(ExportType.CSV) }
@@ -208,8 +281,8 @@ class RecordsActivity : AppCompatActivity() {
     }
 
     private fun setupSpinner(spinner: Spinner, entries: List<String>, onSelect: (Int) -> Unit) {
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, entries).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, entries).apply {
+            setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -225,9 +298,30 @@ class RecordsActivity : AppCompatActivity() {
 
     private fun loadIncidents() {
         lifecycleScope.launch {
-            currentIncidents = database.incidentDao().getAllIncidents()
+            val encrypted = database.incidentDao().getAllIncidents()
+            currentIncidents = encrypted.map { decryptIncident(it) }
             applyFiltersAndRender()
         }
+    }
+
+    private fun decryptIncident(incident: Incident): Incident {
+        return incident.copy(
+            type = EncryptionManager.decrypt(incident.type),
+            description = EncryptionManager.decrypt(incident.description),
+            severity = EncryptionManager.decrypt(incident.severity),
+            location = EncryptionManager.decrypt(incident.location),
+            who = EncryptionManager.decrypt(incident.who)
+        )
+    }
+
+    private fun encryptIncident(incident: Incident): Incident {
+        return incident.copy(
+            type = EncryptionManager.encrypt(incident.type),
+            description = EncryptionManager.encrypt(incident.description),
+            severity = EncryptionManager.encrypt(incident.severity),
+            location = EncryptionManager.encrypt(incident.location),
+            who = EncryptionManager.encrypt(incident.who)
+        )
     }
 
     private fun applyFiltersAndRender() {
@@ -304,17 +398,24 @@ class RecordsActivity : AppCompatActivity() {
     }
 
     private fun showRecordDetailDialog(incident: Incident) {
-        val view = layoutInflater.inflate(R.layout.dialog_record_detail, null)
-        val etType = view.findViewById<EditText>(R.id.et_detail_type)
-        val etDescription = view.findViewById<EditText>(R.id.et_detail_description)
-        val etSeverity = view.findViewById<EditText>(R.id.et_detail_severity)
-        val etLocation = view.findViewById<EditText>(R.id.et_detail_location)
-        val etWho = view.findViewById<EditText>(R.id.et_detail_who)
-        val btnPhoto = view.findViewById<Button>(R.id.btn_detail_photo)
-        val btnVideo = view.findViewById<Button>(R.id.btn_detail_video)
-        val btnPlay = view.findViewById<Button>(R.id.btn_detail_play)
-        val btnSave = view.findViewById<Button>(R.id.btn_detail_save)
-        val btnDelete = view.findViewById<Button>(R.id.btn_detail_delete)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_record_detail)
+        dialog.window?.setBackgroundDrawableResource(R.color.primary_background)
+        detailDialog = dialog
+        isDetailDialogPlaying = isPlaybackRunning && currentlyPlayingIncidentId == incident.id
+
+        val etType = dialog.findViewById<EditText>(R.id.et_detail_type)
+        val etDescription = dialog.findViewById<EditText>(R.id.et_detail_description)
+        val etSeverity = dialog.findViewById<EditText>(R.id.et_detail_severity)
+        val etLocation = dialog.findViewById<EditText>(R.id.et_detail_location)
+        val etWho = dialog.findViewById<EditText>(R.id.et_detail_who)
+        val btnPhoto = dialog.findViewById<Button>(R.id.btn_detail_photo)
+        val btnVideo = dialog.findViewById<Button>(R.id.btn_detail_video)
+        val btnPlay = dialog.findViewById<Button>(R.id.btn_detail_play)
+        val tvPlaybackTime = dialog.findViewById<TextView>(R.id.tv_detail_playback_time)
+        val waveformContainer = dialog.findViewById<LinearLayout>(R.id.ll_detail_waveform)
+        val btnSave = dialog.findViewById<Button>(R.id.btn_detail_save)
+        val btnDelete = dialog.findViewById<Button>(R.id.btn_detail_delete)
 
         etType.setText(incident.type)
         etDescription.setText(incident.description)
@@ -322,19 +423,44 @@ class RecordsActivity : AppCompatActivity() {
         etLocation.setText(incident.location)
         etWho.setText(incident.who)
 
-        btnPhoto.isEnabled = !incident.photoPath.isNullOrBlank() && File(incident.photoPath).exists()
-        btnVideo.isEnabled = !incident.videoPath.isNullOrBlank() && File(incident.videoPath).exists()
-        btnPlay.isEnabled = incident.hasVoiceNote && !incident.voiceNotePath.isNullOrBlank() && File(incident.voiceNotePath).exists()
+        val hasPhoto = !incident.photoPath.isNullOrBlank() && File(incident.photoPath).exists()
+        val hasVideo = !incident.videoPath.isNullOrBlank() && File(incident.videoPath).exists()
+        val canPlay = incident.hasVoiceNote && !incident.voiceNotePath.isNullOrBlank() && File(incident.voiceNotePath).exists()
 
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(getString(R.string.record_details))
-            .setView(view)
-            .setNegativeButton(getString(R.string.cancel), null)
-            .create()
+        btnPhoto.isEnabled = hasPhoto
+        btnVideo.isEnabled = hasVideo
 
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.neutral_text))
+        if (canPlay) {
+            btnPlay.visibility = View.VISIBLE
+            tvPlaybackTime.visibility = View.VISIBLE
+            btnPlay.text = if (isDetailDialogPlaying) getString(R.string.pause) else getString(R.string.play)
+            if (isDetailDialogPlaying && mediaPlayer != null) {
+                tvPlaybackTime.text = "${formatDurationFromMillis(mediaPlayer!!.currentPosition)} / ${formatDurationFromMillis(mediaPlayer!!.duration)}"
+                if (waveformContainer != null) {
+                    waveformContainer.visibility = View.VISIBLE
+                    val seed = (incident.id ?: 0) * 100 + waveformPlaybackSeed
+                    val bars = generateWaveformBars(seed, incident.severity)
+                    updateDetailDialogWaveform(bars)
+                }
+            } else {
+                tvPlaybackTime.text = formatDurationFromMillis(incident.voiceDurationSec * 1000)
+            }
+        } else {
+            btnPlay.visibility = View.GONE
+            tvPlaybackTime.visibility = View.GONE
+        }
+
+        btnPlay.setOnClickListener {
+            if (canPlay) {
+                toggleVoicePlayback(incident)
+                isDetailDialogPlaying = isPlaybackRunning && currentlyPlayingIncidentId == incident.id
+                btnPlay.text = if (isDetailDialogPlaying) getString(R.string.pause) else getString(R.string.play)
+                if (isDetailDialogPlaying) {
+                    waveformContainer?.visibility = View.VISIBLE
+                } else {
+                    waveformContainer?.visibility = View.GONE
+                }
+            }
         }
 
         btnPhoto.setOnClickListener {
@@ -345,28 +471,13 @@ class RecordsActivity : AppCompatActivity() {
             openMediaFromPath(incident.videoPath, "video/*")
         }
 
-        btnPlay.text = if (isPlaybackRunning && currentlyPlayingIncidentId == incident.id) {
-            getString(R.string.pause)
-        } else {
-            getString(R.string.play)
-        }
-
-        btnPlay.setOnClickListener {
-            toggleVoicePlayback(incident)
-            btnPlay.text = if (isPlaybackRunning && currentlyPlayingIncidentId == incident.id) {
-                getString(R.string.pause)
-            } else {
-                getString(R.string.play)
-            }
-        }
-
         btnSave.setOnClickListener {
             val updated = incident.copy(
-                type = etType.text.toString().trim().ifEmpty { incident.type },
-                description = etDescription.text.toString().trim().ifEmpty { incident.description },
-                severity = etSeverity.text.toString().trim().ifEmpty { incident.severity },
-                location = etLocation.text.toString().trim().ifEmpty { incident.location },
-                who = etWho.text.toString().trim().ifEmpty { incident.who }
+                type = EncryptionManager.encrypt(etType.text.toString().trim().ifEmpty { EncryptionManager.decrypt(incident.type) }),
+                description = EncryptionManager.encrypt(etDescription.text.toString().trim().ifEmpty { EncryptionManager.decrypt(incident.description) }),
+                severity = EncryptionManager.encrypt(etSeverity.text.toString().trim().ifEmpty { EncryptionManager.decrypt(incident.severity) }),
+                location = EncryptionManager.encrypt(etLocation.text.toString().trim().ifEmpty { EncryptionManager.decrypt(incident.location) }),
+                who = EncryptionManager.encrypt(etWho.text.toString().trim().ifEmpty { EncryptionManager.decrypt(incident.who) })
             )
 
             lifecycleScope.launch {
@@ -396,12 +507,13 @@ class RecordsActivity : AppCompatActivity() {
         }
 
         dialog.setOnDismissListener {
-            stopVoicePlaybackIfNeeded()
+            detailDialog = null
+            isDetailDialogPlaying = false
         }
 
         dialog.show()
         dialog.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.96f).toInt(),
+            (resources.displayMetrics.widthPixels * 0.94f).toInt(),
             WindowManager.LayoutParams.WRAP_CONTENT
         )
     }
@@ -428,7 +540,8 @@ class RecordsActivity : AppCompatActivity() {
                 val durationMs = player.duration.coerceAtLeast(1)
                 val progress = ((pausedPositionMs * 100f) / durationMs).toInt().coerceIn(0, 100)
                 val label = formatDurationFromMillis(pausedPositionMs)
-                adapter.setPlaybackState(currentlyPlayingIncidentId, false, progress, label)
+                val totalDuration = mediaPlayer?.duration ?: 0
+                adapter.setPlaybackState(currentlyPlayingIncidentId, false, progress, label, formatDurationFromMillis(totalDuration))
                 stopPlaybackUiUpdates()
                 Toast.makeText(this, getString(R.string.preview_paused), Toast.LENGTH_SHORT).show()
             } else if (player != null) {
@@ -484,8 +597,10 @@ class RecordsActivity : AppCompatActivity() {
         currentlyPlayingIncidentId = null
         pausedPositionMs = 0
         isPlaybackRunning = false
+        waveformPlaybackSeed = 0
+        isDetailDialogPlaying = false
         stopPlaybackUiUpdates()
-        adapter.setPlaybackState(null, false, 0, null)
+        adapter.setPlaybackState(null, false, 0, null, null)
     }
 
     private enum class ExportType { CSV, PDF, ENCRYPTED }
@@ -696,6 +811,8 @@ class RecordsActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        detailDialog?.dismiss()
+        detailDialog = null
         stopPlaybackUiUpdates()
         stopVoicePlaybackIfNeeded()
     }

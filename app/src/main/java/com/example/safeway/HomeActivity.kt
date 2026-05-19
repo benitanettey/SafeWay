@@ -79,46 +79,32 @@ class HomeActivity : AppCompatActivity() {
 
         btnEmergency.setOnClickListener {
             startActivity(Intent(this, EmergencyAlertActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnLogIncident.setOnClickListener {
             startActivity(Intent(this, LogIncidentActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnMyCircle.setOnClickListener {
             startActivity(Intent(this, SupportCircleActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnRecords.setOnClickListener {
             startActivity(Intent(this, RecordsActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnResourcesCenter.setOnClickListener {
             startActivity(Intent(this, ResourcesActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
     }
 
     private fun setupBottomNavigation() {
-        val navHome = findViewById<LinearLayout>(R.id.nav_home)
-        val navLog = findViewById<LinearLayout>(R.id.nav_log)
-        val navCircle = findViewById<LinearLayout>(R.id.nav_circle)
-        val navRecords = findViewById<LinearLayout>(R.id.nav_records)
-
-        navHome.setOnClickListener {
-            // Already on home
-        }
-
-        navLog.setOnClickListener {
-            startActivity(Intent(this, LogIncidentActivity::class.java))
-        }
-
-        navCircle.setOnClickListener {
-            startActivity(Intent(this, SupportCircleActivity::class.java))
-        }
-
-        navRecords.setOnClickListener {
-            startActivity(Intent(this, RecordsActivity::class.java))
-        }
+        BottomNavHelper.setup(this, NavTab.HOME)
     }
 
     private fun setupHotlines() {
@@ -335,7 +321,7 @@ class HomeActivity : AppCompatActivity() {
             })
         }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.add_hotline_title))
             .setView(container)
             .setPositiveButton(getString(R.string.save)) { _, _ ->
@@ -355,7 +341,18 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+            .create()
+            .apply {
+                setOnShowListener {
+                    getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                        ContextCompat.getColor(this@HomeActivity, R.color.highlight_accent)
+                    )
+                    getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                        ContextCompat.getColor(this@HomeActivity, R.color.neutral_text)
+                    )
+                }
+            }
+        dialog.show()
     }
 
     private fun confirmDeleteHotline(hotline: Hotline) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#0a0e14" />
-    <stroke android:color="#1a2a3a" android:width="1.5dp" />
-    <corners android:radius="21dp" />
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/secondary_background" />
+    <stroke android:width="2dp" android:color="@color/border_accent" android:dashWidth="4dp" android:dashGap="4dp" />
+    <size android:width="44dp" android:height="44dp" />
 </shape>
-

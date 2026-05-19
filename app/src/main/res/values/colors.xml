@@ -1,27 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors - Must Be Maintained -->
+    <!-- Primary Background Suite - Deep OLED Dark -->
     <color name="primary_background">#0a0e14</color>
-    <color name="secondary_background">#0e1520</color>
+    <color name="secondary_background">#0d1520</color>
+    <color name="tertiary_background">#111d2e</color>
     <color name="card_background">#111c28</color>
-    <color name="primary_accent">#1a4a7a</color>
-    <color name="highlight_accent">#4a9ade</color>
-    <color name="neutral_text">#6a8aaa</color>
-    <color name="primary_text">#d0dde8</color>
-    <color name="neutral_muted">#2a4a6a</color>
-    <color name="emergency_red">#cc4444</color>
-    <color name="border_dark">#1e2e42</color>
+    <color name="card_background_lighter">#162233</color>
+    <color name="elevated_background">#1a2a3e</color>
 
-    <!-- Additional Text Colors -->
+    <!-- Gradients -->
+    <color name="gradient_emergency_start">#4a0000</color>
+    <color name="gradient_emergency_end">#1a0000</color>
+    <color name="gradient_primary_start">#1a4a7a</color>
+    <color name="gradient_primary_end">#0f2d4a</color>
+    <color name="gradient_accent_start">#4a9ade</color>
+    <color name="gradient_accent_end">#2a6aaa</color>
+    <color name="gradient_card_start">#1a2a3e</color>
+    <color name="gradient_card_end">#111c28</color>
+    <color name="gradient_gold_start">#d4a844</color>
+    <color name="gradient_gold_end">#8a6a1a</color>
+    <color name="gradient_success_start">#22a855</color>
+    <color name="gradient_success_end">#116633</color>
+
+    <!-- Primary Accent Suite -->
+    <color name="primary_accent">#1a4a7a</color>
+    <color name="primary_accent_light">#2a6aaa</color>
+    <color name="primary_accent_dim">#0f2d4a</color>
+    <color name="highlight_accent">#4a9ade</color>
+    <color name="highlight_accent_light">#6ab4ee</color>
+    <color name="highlight_accent_dim">#3a7abc</color>
+
+    <!-- Glassmorphism -->
+    <color name="glass_background">#1a1a2e66</color>
+    <color name="glass_border">#2a4a6a44</color>
+    <color name="glass_highlight">#ffffff08</color>
+
+    <!-- Text Suite -->
+    <color name="primary_text">#d0dde8</color>
     <color name="text_primary">#d0dde8</color>
     <color name="text_secondary">#aabbcc</color>
+    <color name="neutral_text">#6a8aaa</color>
+    <color name="neutral_muted">#2a4a6a</color>
+    <color name="text_disabled">#1a3a5a</color>
+    <color name="text_on_primary">#ffffff</color>
+    <color name="text_on_dark">#e0eaf5</color>
 
-    <!-- Section Label Color -->
-    <color name="section_label">#2a4a6a</color>
+    <!-- Border Suite -->
+    <color name="border_dark">#1e2e42</color>
+    <color name="border_light">#2a4a6a</color>
+    <color name="border_accent">#3a6a9a</color>
+    <color name="border_glass">#2a4a6a66</color>
 
-    <!-- Status Colors -->
+    <!-- Status & Feedback Colors -->
     <color name="status_active">@color/highlight_accent</color>
     <color name="status_inactive">@color/neutral_muted</color>
+    <color name="status_success">#22c55e</color>
+    <color name="status_warning">#f59e0b</color>
+    <color name="status_error">#ef4444</color>
+
+    <!-- Emergency Suite -->
+    <color name="emergency_red">#cc4444</color>
+    <color name="emergency_red_light">#ee5555</color>
+    <color name="emergency_red_dark">#881111</color>
+    <color name="emergency_red_dim">#1a0808</color>
+    <color name="emergency_bg">#1a0808</color>
+    <color name="emergency_pulse">#ff4444</color>
+
+    <!-- Section Labels -->
+    <color name="section_label">#2a4a6a</color>
+    <color name="section_label_light">#3a6a9a</color>
 
     <!-- Hotline Cards -->
     <color name="hotline_card_background">#101a26</color>
@@ -32,5 +79,11 @@
     <color name="button_primary_stroke">#2a6aaa</color>
     <color name="button_secondary_fill">#102033</color>
     <color name="button_secondary_stroke">#2d547a</color>
-</resources>
 
+    <!-- Overlay & Shadow -->
+    <color name="shadow_color">#00000040</color>
+    <color name="overlay_dim">#00000080</color>
+    <color name="scrim_background">#000000aa</color>
+    <color name="ripple_primary">#1a4a7a44</color>
+    <color name="ripple_white">#ffffff22</color>
+</resources>

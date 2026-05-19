@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/hotline_card_background" />
-    <stroke
-        android:width="1dp"
-        android:color="@color/hotline_card_border" />
-    <corners android:radius="18dp" />
+    <gradient
+        android:angle="135"
+        android:startColor="@color/hotline_card_background"
+        android:endColor="@color/primary_background" />
+    <corners android:radius="16dp" />
+    <stroke android:width="1dp" android:color="@color/hotline_card_border" />
 </shape>
-
-

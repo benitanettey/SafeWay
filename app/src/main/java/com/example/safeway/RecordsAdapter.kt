@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -29,24 +31,60 @@ class RecordsAdapter(
     private var isPlaybackRunning: Boolean = false
     private var playbackProgressPercent: Int = 0
     private var playbackElapsedLabel: String? = null
+    private var playbackDurationLabel: String? = null
+    private var activeViewHolder: RecordViewHolder? = null
 
     fun submitItems(newItems: List<Incident>) {
         items.clear()
         items.addAll(newItems)
+        activeViewHolder = null
         notifyDataSetChanged()
     }
 
+    /**
+     * Updates playback state. Only triggers adapter rebind on start/stop transitions,
+     * NOT during active playback — during playback, views are updated directly.
+     */
     fun setPlaybackState(
         incidentId: Int?,
         isPlaying: Boolean,
         progressPercent: Int = 0,
-        elapsedLabel: String? = null
+        elapsedLabel: String? = null,
+        durationLabel: String? = null
     ) {
+        val wasPlaying = isPlaybackRunning && activePlaybackIncidentId != null
+        val nowPlaying = isPlaying && incidentId != null
+        val transitioning = wasPlaying != nowPlaying
+
         activePlaybackIncidentId = incidentId
         isPlaybackRunning = isPlaying
         playbackProgressPercent = progressPercent.coerceIn(0, 100)
         playbackElapsedLabel = elapsedLabel
-        notifyDataSetChanged()
+        playbackDurationLabel = durationLabel
+
+        if (transitioning) {
+            // Playback started or stopped — need to show/hide waveform across items
+            activeViewHolder = null
+            notifyDataSetChanged()
+        } else if (isPlaying && incidentId != null) {
+            // Active playback tick — update the active ViewHolder directly, no rebind
+            activeViewHolder?.updatePlaybackUi(
+                progressPercent = playbackProgressPercent,
+                elapsedLabel = playbackElapsedLabel,
+                durationLabel = playbackDurationLabel,
+                waveformVisible = true
+            )
+        }
+    }
+
+    fun getActivePlaybackId(): Int? = activePlaybackIncidentId
+    fun isPlaying(): Boolean = isPlaybackRunning
+
+    /**
+     * Directly updates waveform bars on the active playback ViewHolder without rebinding.
+     */
+    fun updatePlaybackWaveform(bars: List<Int>) {
+        activeViewHolder?.setWaveformBars(bars)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordViewHolder {
@@ -58,21 +96,35 @@ class RecordsAdapter(
     override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
         val incident = items[position]
         val isActivePlayback = activePlaybackIncidentId == incident.id
+
+        // Track holder for direct playback updates
+        if (isActivePlayback && isPlaybackRunning) {
+            activeViewHolder = holder
+        }
+
         holder.bind(
             incident = incident,
             isPlaying = isPlaybackRunning && isActivePlayback,
             isActivePlayback = isActivePlayback,
             playbackProgressPercent = if (isActivePlayback) playbackProgressPercent else 0,
             playbackElapsedLabel = if (isActivePlayback) playbackElapsedLabel else null,
+            playbackDurationLabel = if (isActivePlayback) playbackDurationLabel else null,
             onCardClick = onCardClick,
             onDetailsClick = onDetailsClick,
             onVoicePlayClick = onVoicePlayClick
         )
     }
 
+    override fun onViewRecycled(holder: RecordViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder == activeViewHolder) {
+            activeViewHolder = null
+        }
+    }
+
     override fun getItemCount(): Int = items.size
 
-    class RecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class RecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val title = itemView.findViewById<TextView>(R.id.tv_record_title)
         private val time = itemView.findViewById<TextView>(R.id.tv_record_time)
         private val description = itemView.findViewById<TextView>(R.id.tv_record_description)
@@ -81,8 +133,11 @@ class RecordsAdapter(
         private val chipVoice = itemView.findViewById<Chip>(R.id.chip_voice)
         private val chipPhoto = itemView.findViewById<Chip>(R.id.chip_photo)
         private val chipVideo = itemView.findViewById<Chip>(R.id.chip_video)
+        val llWaveform = itemView.findViewById<LinearLayout>(R.id.ll_item_waveform)
+        private val containerPlay = itemView.findViewById<FrameLayout>(R.id.container_item_play)
         private val progressRing = itemView.findViewById<CircularProgressIndicator>(R.id.progress_playback_ring)
         private val btnPlay = itemView.findViewById<ImageButton>(R.id.btn_item_play)
+        val tvPlaybackLabel = itemView.findViewById<TextView>(R.id.tv_item_playback_label)
         private val btnDetails = itemView.findViewById<Button>(R.id.btn_item_details)
 
         fun bind(
@@ -91,17 +146,14 @@ class RecordsAdapter(
             isActivePlayback: Boolean,
             playbackProgressPercent: Int,
             playbackElapsedLabel: String?,
+            playbackDurationLabel: String?,
             onCardClick: (Incident) -> Unit,
             onDetailsClick: (Incident) -> Unit,
             onVoicePlayClick: (Incident) -> Unit
         ) {
             title.text = incident.type
             val defaultTime = SimpleDateFormat("MMM dd • HH:mm", Locale.getDefault()).format(Date(incident.createdAtMillis))
-            time.text = if (isActivePlayback && !playbackElapsedLabel.isNullOrBlank()) {
-                playbackElapsedLabel
-            } else {
-                defaultTime
-            }
+            time.text = defaultTime
             description.text = incident.description
 
             setupChip(chipSeverity, incident.severity, isSeverity = true)
@@ -131,7 +183,7 @@ class RecordsAdapter(
             )
 
             val canPlay = incident.hasVoiceNote && !incident.voiceNotePath.isNullOrBlank() && File(incident.voiceNotePath).exists()
-            btnPlay.visibility = if (canPlay) View.VISIBLE else View.GONE
+            containerPlay.visibility = if (canPlay) View.VISIBLE else View.GONE
 
             if (canPlay) {
                 val iconRes = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
@@ -140,13 +192,75 @@ class RecordsAdapter(
                 btnPlay.contentDescription = itemView.context.getString(descriptionRes)
             }
 
-            progressRing.visibility = if (isActivePlayback) View.VISIBLE else View.GONE
+            llWaveform.visibility = if (isActivePlayback) View.VISIBLE else View.GONE
+            progressRing.visibility = if (isActivePlayback && isPlaying) View.VISIBLE else View.GONE
             progressRing.isIndeterminate = false
             progressRing.progress = playbackProgressPercent
+
+            if (isActivePlayback && playbackElapsedLabel != null) {
+                tvPlaybackLabel.visibility = View.VISIBLE
+                val label = if (playbackDurationLabel != null) {
+                    "${playbackElapsedLabel} / ${playbackDurationLabel}"
+                } else {
+                    playbackElapsedLabel
+                }
+                tvPlaybackLabel.text = label
+            } else {
+                tvPlaybackLabel.visibility = View.GONE
+            }
 
             itemView.setOnClickListener { onCardClick(incident) }
             btnDetails.setOnClickListener { onDetailsClick(incident) }
             btnPlay.setOnClickListener { onVoicePlayClick(incident) }
+        }
+
+        /**
+         * Sets waveform bars directly on this holder without triggering a rebind.
+         */
+        fun setWaveformBars(barHeights: List<Int>) {
+            llWaveform.removeAllViews()
+            val context = itemView.context
+            val density = context.resources.displayMetrics.density
+            for (heightDp in barHeights) {
+                val bar = View(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        (4 * density).toInt(),
+                        (heightDp * density).toInt()
+                    ).apply {
+                        setMargins(2, 0, 2, 0)
+                        gravity = android.view.Gravity.BOTTOM
+                    }
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.highlight_accent))
+                    alpha = 0.5f + (heightDp.toFloat() / 28f) * 0.5f
+                }
+                llWaveform.addView(bar)
+            }
+        }
+
+        /**
+         * Direct UI update during active playback — no rebind, no flicker.
+         */
+        fun updatePlaybackUi(
+            progressPercent: Int,
+            elapsedLabel: String?,
+            durationLabel: String?,
+            waveformVisible: Boolean
+        ) {
+            llWaveform.visibility = if (waveformVisible) View.VISIBLE else View.GONE
+            progressRing.visibility = if (waveformVisible) View.VISIBLE else View.GONE
+            progressRing.isIndeterminate = false
+            progressRing.progress = progressPercent
+
+            if (elapsedLabel != null) {
+                tvPlaybackLabel.visibility = View.VISIBLE
+                tvPlaybackLabel.text = if (durationLabel != null) {
+                    "$elapsedLabel / $durationLabel"
+                } else {
+                    elapsedLabel
+                }
+            } else {
+                tvPlaybackLabel.visibility = View.GONE
+            }
         }
 
         private fun setupChip(chip: Chip, text: String, isSeverity: Boolean, highlighted: Boolean = false) {
@@ -178,7 +292,3 @@ class RecordsAdapter(
         }
     }
 }
-
-
-
-

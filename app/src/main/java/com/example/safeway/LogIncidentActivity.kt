@@ -71,6 +71,7 @@ class LogIncidentActivity : AppCompatActivity() {
     private var pendingVideoPath: String? = null
     private var isPlayingPreview = false
     private val recordingHandler = Handler(Looper.getMainLooper())
+    private val playbackWaveformHandler = Handler(Looper.getMainLooper())
 
     private enum class PendingCaptureAction {
         NONE,
@@ -135,6 +136,7 @@ class LogIncidentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_log_incident)
         database = AppDatabase.getDatabase(this)
 
+        BottomNavHelper.setup(this, NavTab.LOG)
         initializeViews()
         setupListeners()
         setupChipSelection(incidentTypeChips)
@@ -174,6 +176,7 @@ class LogIncidentActivity : AppCompatActivity() {
                 stopRecording(showToast = false)
             }
             finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
         }
 
         btnRecord.setOnClickListener {
@@ -550,6 +553,8 @@ class LogIncidentActivity : AppCompatActivity() {
                 start()
             }
             isPlayingPreview = true
+            waveformPlaybackSeed = 0
+            playbackWaveformHandler.post(playbackWaveformRunnable)
             updatePreviewButtonUi(true)
             tvRecordStatus.text = getString(R.string.preview_playing)
         } catch (_: Exception) {
@@ -565,6 +570,8 @@ class LogIncidentActivity : AppCompatActivity() {
         }
         mediaPlayer = null
         isPlayingPreview = false
+        playbackWaveformHandler.removeCallbacks(playbackWaveformRunnable)
+        waveformPlaybackSeed = 0
         updatePreviewButtonUi(false)
         if (!voiceNotePath.isNullOrBlank()) {
             tvRecordStatus.text = getString(R.string.tap_preview_or_record)
@@ -610,26 +617,84 @@ class LogIncidentActivity : AppCompatActivity() {
     private fun simulateWaveform() {
         recordingHandler.post(object : Runnable {
             override fun run() {
-                if (isRecording) {
-                    recordingSeconds++
-                    tvRecordTime.text = formatDuration(recordingSeconds)
+                if (!isRecording) return
 
-                    val bar = View(this@LogIncidentActivity).apply {
-                        layoutParams = LinearLayout.LayoutParams(3.dpToPx(), (4..20).random().dpToPx()).apply {
-                            setMargins(2, 0, 2, 0)
-                        }
-                        setBackgroundColor(getColor(R.color.highlight_accent))
-                    }
-                    llWaveform.addView(bar)
+                recordingSeconds++
+                tvRecordTime.text = formatDuration(recordingSeconds)
 
-                    if (llWaveform.childCount > 50) {
-                        llWaveform.removeViewAt(0)
-                    }
-
-                    recordingHandler.postDelayed(this, 1000)
+                val amp = getAmplitude()
+                // Normalize amplitude (typically 0-32767) to bar height (4-28dp)
+                val normalizedAmp = if (amp > 0) {
+                    (amp.toFloat() / 32767f * 24f + 4f).toInt().coerceIn(4, 28)
+                } else {
+                    (4..12).random()
                 }
+
+                val bar = View(this@LogIncidentActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(4.dpToPx(), normalizedAmp.dpToPx()).apply {
+                        setMargins(2, 0, 2, 0)
+                        gravity = Gravity.BOTTOM
+                    }
+                    setBackgroundColor(getColor(R.color.highlight_accent))
+                    alpha = 0.7f + (normalizedAmp.toFloat() / 28f) * 0.3f
+                }
+                llWaveform.addView(bar)
+
+                if (llWaveform.childCount > 80) {
+                    llWaveform.removeViewAt(0)
+                }
+
+                recordingHandler.postDelayed(this, 200)
             }
         })
+    }
+
+    private var waveformPlaybackSeed = 0
+
+    private val playbackWaveformRunnable = object : Runnable {
+        override fun run() {
+            if (!isPlayingPreview) return
+            val player = mediaPlayer ?: return
+            if (!player.isPlaying) return
+
+            val progress = player.currentPosition.coerceAtLeast(0)
+            val duration = player.duration.coerceAtLeast(1)
+            val bars = generatePlaybackWaveform(waveformPlaybackSeed, duration)
+
+            llWaveform.removeAllViews()
+            val density = this@LogIncidentActivity.resources.displayMetrics.density
+            for (heightDp in bars) {
+                val bar = View(this@LogIncidentActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        (4 * density).toInt(),
+                        (heightDp * density).toInt()
+                    ).apply {
+                        setMargins(2, 0, 2, 0)
+                        gravity = Gravity.BOTTOM
+                    }
+                    setBackgroundColor(getColor(R.color.highlight_accent))
+                    alpha = 0.5f + (heightDp.toFloat() / 32f) * 0.5f
+                }
+                llWaveform.addView(bar)
+            }
+
+            waveformPlaybackSeed++
+            playbackWaveformHandler.postDelayed(this, 200)
+        }
+    }
+
+    private fun generatePlaybackWaveform(seed: Int, totalDurationMs: Int): List<Int> {
+        val bars = mutableListOf<Int>()
+        val barCount = 35
+        for (i in 0 until barCount) {
+            val pos = (i.toFloat() / barCount) * 100f
+            val wave = (Math.sin((pos + seed * 4) * 0.08) * 0.5 + 0.5)
+            val wave2 = (Math.sin((pos + seed * 2) * 0.15) * 0.3)
+            val noise = (Math.sin((i * 137.0 + seed * 73.0)) * 0.15 + 0.15)
+            val height = ((wave + wave2 + noise) * 12f + 4f).toInt().coerceIn(4, 32)
+            bars.add(height)
+        }
+        return bars
     }
 
     private fun saveIncident() {
@@ -665,11 +730,11 @@ class LogIncidentActivity : AppCompatActivity() {
         }
 
         val incident = Incident(
-            type = selectedType,
-            description = description,
-            severity = selectedSeverity,
-            location = location,
-            who = who.ifEmpty { getString(R.string.who_unknown) },
+            type = EncryptionManager.encrypt(selectedType),
+            description = EncryptionManager.encrypt(description),
+            severity = EncryptionManager.encrypt(selectedSeverity),
+            location = EncryptionManager.encrypt(location),
+            who = EncryptionManager.encrypt(who.ifEmpty { getString(R.string.who_unknown) }),
             hasVoiceNote = !voiceNotePath.isNullOrBlank(),
             voiceNotePath = voiceNotePath,
             voiceDurationSec = recordingSeconds,
@@ -770,6 +835,7 @@ class LogIncidentActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         recordingHandler.removeCallbacksAndMessages(null)
+        playbackWaveformHandler.removeCallbacks(playbackWaveformRunnable)
         if (isRecording) {
             stopRecording(showToast = false)
         }
@@ -800,5 +866,13 @@ class LogIncidentActivity : AppCompatActivity() {
     }
 
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+
+    private fun getAmplitude(): Int {
+        return try {
+            mediaRecorder?.maxAmplitude?.coerceAtLeast(0) ?: 0
+        } catch (_: Exception) {
+            0
+        }
+    }
 }
 
