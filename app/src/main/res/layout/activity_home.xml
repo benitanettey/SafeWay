@@ -104,6 +104,55 @@
 
             </LinearLayout>
 
+            <!-- Permissions Alert Card -->
+            <LinearLayout
+                android:id="@+id/permissions_home_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_elevated_background"
+                android:padding="16dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/permissions_needed_title"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/emergency_red" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/permissions_needed_desc"
+                    android:textSize="11sp"
+                    android:textColor="@color/neutral_text"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/permissions_home_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <Button
+                    android:id="@+id/btn_home_fix_permissions"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/grant_all"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_primary_bg" />
+
+            </LinearLayout>
+
             <!-- Quick Actions Section -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -317,6 +366,70 @@
 
             </GridLayout>
 
+            <!-- BT Protection Card -->
+            <LinearLayout
+                android:id="@+id/btn_bt_protection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/card_elevated_background"
+                android:padding="16dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/avatar_background">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_shield"
+                        android:contentDescription="@string/bt_protection"
+                        android:tint="@color/highlight_accent"
+                        android:scaleType="centerInside" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bt_protection_card_title"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bt_protection_card_subtitle"
+                        android:textSize="11sp"
+                        android:textColor="@color/neutral_text"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@android:drawable/ic_media_next"
+                    android:tint="@color/neutral_muted"
+                    android:contentDescription="@string/bt_protection" />
+            </LinearLayout>
+
             <!-- Shield Protection Card -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -326,7 +439,7 @@
                 android:padding="18dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp">
 
                 <LinearLayout
