@@ -30,6 +30,8 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.safeway.data.AppDatabase
 import com.example.safeway.data.Incident
+import com.example.safeway.domain.ProtectionPrefs
+import com.example.safeway.service.ProtectionForegroundService
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import java.io.File
@@ -70,7 +72,13 @@ class LogIncidentActivity : AppCompatActivity() {
     private var pendingPhotoPath: String? = null
     private var pendingVideoPath: String? = null
     private var isPlayingPreview = false
+    private var pendingVoiceNoteLoaded = false
+    /** Tracks whether background recording was active when we last polled,
+     *  so we can detect the transition and auto-load the result. */
+    private var wasBackgroundRecording = false
     private val recordingHandler = Handler(Looper.getMainLooper())
+    private val playbackWaveformHandler = Handler(Looper.getMainLooper())
+    private val autoRefreshHandler = Handler(Looper.getMainLooper())
 
     private enum class PendingCaptureAction {
         NONE,
@@ -83,6 +91,16 @@ class LogIncidentActivity : AppCompatActivity() {
     companion object {
         private const val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 2001
         private const val CAMERA_PERMISSION_REQUEST_CODE = 2002
+        const val EXTRA_START_RECORDING = "extra_start_recording"
+
+        private const val DRAFT_PREFS = "incident_draft"
+        private const val KEY_DRAFT_DESC = "draft_description"
+        private const val KEY_DRAFT_LOC = "draft_location"
+        private const val KEY_DRAFT_WHO = "draft_who"
+        private const val KEY_DRAFT_TYPE = "draft_type_index"
+        private const val KEY_DRAFT_SEV = "draft_severity_index"
+        private const val KEY_DRAFT_PHOTO = "draft_photo_path"
+        private const val KEY_DRAFT_VIDEO = "draft_video_path"
     }
 
     private val takePhotoLauncher =
@@ -135,13 +153,104 @@ class LogIncidentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_log_incident)
         database = AppDatabase.getDatabase(this)
 
+        BottomNavHelper.setup(this, NavTab.LOG)
         initializeViews()
         setupListeners()
         setupChipSelection(incidentTypeChips)
         setupChipSelection(severityChips)
         updateVoiceActionButtons()
         updateEvidenceStatus()
+
+        if (intent.getBooleanExtra(EXTRA_START_RECORDING, false)) {
+            startRecording()
+        }
+
+        // Load pending voice note from background recording (earbud double-tap)
+        loadPendingVoiceNote()
+
+        // Restore draft form fields from a previous session
+        loadDraft()
+
+        // Show indicator if background recording is currently in progress
+        if (ProtectionForegroundService.isBackgroundRecording) {
+            tvRecordLabel.text = "Background Recording Active"
+            tvRecordStatus.text = "Background recording active — double-tap to stop"
+        }
     }
+
+    override fun onResume() {
+        super.onResume()
+        wasBackgroundRecording = ProtectionForegroundService.isBackgroundRecording
+        startAutoRefresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAutoRefresh()
+        saveDraft()
+    }
+
+    // ------------------------------------------------------------------
+    // Auto-refresh: polls for background recording completion
+    // ------------------------------------------------------------------
+
+    private val autoRefreshRunnable = object : Runnable {
+        override fun run() {
+            val stillRecording = ProtectionForegroundService.isBackgroundRecording
+            val justStopped = wasBackgroundRecording && !stillRecording
+
+            // Check for a new pending voice note (recording just stopped or appeared)
+            val pendingPath = ProtectionPrefs.getPendingVoiceNotePath(this@LogIncidentActivity)
+            if (pendingPath != null && pendingPath != voiceNotePath && !pendingVoiceNoteLoaded) {
+                loadPendingVoiceNote()
+            }
+
+            // Update the "Background Recording Active" indicator
+            if (stillRecording) {
+                tvRecordLabel.text = "Background Recording Active"
+                tvRecordStatus.text = "Background recording active — double-tap to stop"
+            } else if (justStopped && voiceNotePath == null) {
+                // Recording stopped but nothing loaded yet — check one more time
+                loadPendingVoiceNote()
+            }
+
+            wasBackgroundRecording = stillRecording
+            autoRefreshHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private fun startAutoRefresh() {
+        autoRefreshHandler.removeCallbacks(autoRefreshRunnable)
+        autoRefreshHandler.post(autoRefreshRunnable)
+    }
+
+    private fun stopAutoRefresh() {
+        autoRefreshHandler.removeCallbacks(autoRefreshRunnable)
+    }
+
+    private fun loadPendingVoiceNote() {
+        if (pendingVoiceNoteLoaded) return
+        val pendingPath = ProtectionPrefs.getPendingVoiceNotePath(this) ?: return
+        if (!File(pendingPath).exists()) {
+            ProtectionPrefs.clearPendingVoiceNote(this)
+            return
+        }
+        pendingVoiceNoteLoaded = true
+        val pendingDuration = ProtectionPrefs.getPendingVoiceNoteDuration(this)
+        // Don't clear prefs here — defer to save or delete so the draft
+        // survives if the user exits without saving.
+
+        // Delete any previous unsaved recording
+        voiceNotePath?.let { deleteAudioFile(it) }
+        voiceNotePath = pendingPath
+        recordingSeconds = pendingDuration
+
+        tvRecordLabel.text = getString(R.string.voice_note_saved)
+        tvRecordStatus.text = getString(R.string.encrypted_duration, formatDuration(recordingSeconds))
+        updateVoiceActionButtons()
+        Toast.makeText(this, getString(R.string.voice_note_recorded, formatDuration(recordingSeconds)), Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun initializeViews() {
         btnBack = findViewById(R.id.btn_back_log)
@@ -173,7 +282,21 @@ class LogIncidentActivity : AppCompatActivity() {
             if (isRecording) {
                 stopRecording(showToast = false)
             }
-            finish()
+            if (hasUnsavedData()) {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Discard draft?")
+                    .setMessage("You have unsaved data. Discard it?")
+                    .setPositiveButton("Discard") { _, _ ->
+                        clearDraft()
+                        finish()
+                        overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
+                    }
+                    .setNegativeButton("Keep editing", null)
+                    .show()
+            } else {
+                finish()
+                overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
+            }
         }
 
         btnRecord.setOnClickListener {
@@ -495,6 +618,10 @@ class LogIncidentActivity : AppCompatActivity() {
         }
 
         val deleted = voiceNotePath?.let { deleteAudioFile(it) } ?: false
+        if (pendingVoiceNoteLoaded) {
+            ProtectionPrefs.clearPendingVoiceNote(this)
+            pendingVoiceNoteLoaded = false
+        }
         voiceNotePath = null
         recordingSeconds = 0
         resetVoiceUi()
@@ -550,6 +677,10 @@ class LogIncidentActivity : AppCompatActivity() {
                 start()
             }
             isPlayingPreview = true
+            waveformPlaybackSeed = 0
+            tvRecordTime.text = getString(R.string.record_time_default)
+            playbackWaveformHandler.post(playbackWaveformRunnable)
+            playbackWaveformHandler.post(previewTimerRunnable)
             updatePreviewButtonUi(true)
             tvRecordStatus.text = getString(R.string.preview_playing)
         } catch (_: Exception) {
@@ -565,7 +696,11 @@ class LogIncidentActivity : AppCompatActivity() {
         }
         mediaPlayer = null
         isPlayingPreview = false
+        playbackWaveformHandler.removeCallbacks(playbackWaveformRunnable)
+        playbackWaveformHandler.removeCallbacks(previewTimerRunnable)
+        waveformPlaybackSeed = 0
         updatePreviewButtonUi(false)
+        tvRecordTime.text = getString(R.string.record_time_default)
         if (!voiceNotePath.isNullOrBlank()) {
             tvRecordStatus.text = getString(R.string.tap_preview_or_record)
         }
@@ -610,26 +745,155 @@ class LogIncidentActivity : AppCompatActivity() {
     private fun simulateWaveform() {
         recordingHandler.post(object : Runnable {
             override fun run() {
-                if (isRecording) {
-                    recordingSeconds++
-                    tvRecordTime.text = formatDuration(recordingSeconds)
+                if (!isRecording) return
 
-                    val bar = View(this@LogIncidentActivity).apply {
-                        layoutParams = LinearLayout.LayoutParams(3.dpToPx(), (4..20).random().dpToPx()).apply {
-                            setMargins(2, 0, 2, 0)
-                        }
-                        setBackgroundColor(getColor(R.color.highlight_accent))
-                    }
-                    llWaveform.addView(bar)
+                recordingSeconds++
+                tvRecordTime.text = formatDuration(recordingSeconds)
 
-                    if (llWaveform.childCount > 50) {
-                        llWaveform.removeViewAt(0)
-                    }
-
-                    recordingHandler.postDelayed(this, 1000)
+                val amp = getAmplitude()
+                // Normalize amplitude (typically 0-32767) to bar height (4-28dp)
+                val normalizedAmp = if (amp > 0) {
+                    (amp.toFloat() / 32767f * 24f + 4f).toInt().coerceIn(4, 28)
+                } else {
+                    (4..12).random()
                 }
+
+                val bar = View(this@LogIncidentActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(4.dpToPx(), normalizedAmp.dpToPx()).apply {
+                        setMargins(2, 0, 2, 0)
+                        gravity = Gravity.BOTTOM
+                    }
+                    setBackgroundColor(getColor(R.color.highlight_accent))
+                    alpha = 0.7f + (normalizedAmp.toFloat() / 28f) * 0.3f
+                }
+                llWaveform.addView(bar)
+
+                if (llWaveform.childCount > 80) {
+                    llWaveform.removeViewAt(0)
+                }
+
+                recordingHandler.postDelayed(this, 200)
             }
         })
+    }
+
+    private var waveformPlaybackSeed = 0
+
+    private val previewTimerRunnable = object : Runnable {
+        override fun run() {
+            if (!isPlayingPreview) return
+            val player = mediaPlayer ?: return
+            if (!player.isPlaying) return
+            val elapsedMs = player.currentPosition.coerceAtLeast(0)
+            tvRecordTime.text = formatDuration(elapsedMs / 1000)
+            playbackWaveformHandler.postDelayed(this, 200)
+        }
+    }
+
+    private val playbackWaveformRunnable = object : Runnable {
+        override fun run() {
+            if (!isPlayingPreview) return
+            val player = mediaPlayer ?: return
+            if (!player.isPlaying) return
+
+            val progress = player.currentPosition.coerceAtLeast(0)
+            val duration = player.duration.coerceAtLeast(1)
+            val bars = generatePlaybackWaveform(waveformPlaybackSeed, duration)
+
+            llWaveform.removeAllViews()
+            val density = this@LogIncidentActivity.resources.displayMetrics.density
+            for (heightDp in bars) {
+                val bar = View(this@LogIncidentActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        (4 * density).toInt(),
+                        (heightDp * density).toInt()
+                    ).apply {
+                        setMargins(2, 0, 2, 0)
+                        gravity = Gravity.BOTTOM
+                    }
+                    setBackgroundColor(getColor(R.color.highlight_accent))
+                    alpha = 0.5f + (heightDp.toFloat() / 32f) * 0.5f
+                }
+                llWaveform.addView(bar)
+            }
+
+            waveformPlaybackSeed++
+            playbackWaveformHandler.postDelayed(this, 200)
+        }
+    }
+
+    private fun generatePlaybackWaveform(seed: Int, totalDurationMs: Int): List<Int> {
+        val bars = mutableListOf<Int>()
+        val barCount = 35
+        for (i in 0 until barCount) {
+            val pos = (i.toFloat() / barCount) * 100f
+            val wave = (Math.sin((pos + seed * 4) * 0.08) * 0.5 + 0.5)
+            val wave2 = (Math.sin((pos + seed * 2) * 0.15) * 0.3)
+            val noise = (Math.sin((i * 137.0 + seed * 73.0)) * 0.15 + 0.15)
+            val height = ((wave + wave2 + noise) * 12f + 4f).toInt().coerceIn(4, 32)
+            bars.add(height)
+        }
+        return bars
+    }
+
+    // ------------------------------------------------------------------
+    // Draft persistence — saves/restores form state across sessions
+    // ------------------------------------------------------------------
+
+    private fun saveDraft() {
+        val prefs = getSharedPreferences(DRAFT_PREFS, MODE_PRIVATE)
+        prefs.edit()
+            .putString(KEY_DRAFT_DESC, etDescription.text.toString())
+            .putString(KEY_DRAFT_LOC, etLocation.text.toString())
+            .putString(KEY_DRAFT_WHO, etWho.text.toString())
+            .putInt(KEY_DRAFT_TYPE, incidentTypeChips.indexOfFirst { it.isChecked })
+            .putInt(KEY_DRAFT_SEV, severityChips.indexOfFirst { it.isChecked })
+            .putString(KEY_DRAFT_PHOTO, photoPath)
+            .putString(KEY_DRAFT_VIDEO, videoPath)
+            .apply()
+    }
+
+    private fun loadDraft() {
+        // Don't restore if this is a fresh activity with no saved draft
+        val prefs = getSharedPreferences(DRAFT_PREFS, MODE_PRIVATE)
+        if (!prefs.contains(KEY_DRAFT_DESC) && !prefs.contains(KEY_DRAFT_PHOTO)) return
+
+        // Text fields
+        prefs.getString(KEY_DRAFT_DESC, "")?.let { etDescription.setText(it) }
+        prefs.getString(KEY_DRAFT_LOC, "")?.let { etLocation.setText(it) }
+        prefs.getString(KEY_DRAFT_WHO, "")?.let { etWho.setText(it) }
+
+        // Chip selections
+        val typeIdx = prefs.getInt(KEY_DRAFT_TYPE, -1)
+        if (typeIdx in incidentTypeChips.indices) {
+            incidentTypeChips[typeIdx].isChecked = true
+        }
+        val sevIdx = prefs.getInt(KEY_DRAFT_SEV, -1)
+        if (sevIdx in severityChips.indices) {
+            severityChips[sevIdx].isChecked = true
+        }
+
+        // Photo and video — only restore if file still exists
+        val savedPhoto = prefs.getString(KEY_DRAFT_PHOTO, null)
+        if (!savedPhoto.isNullOrBlank() && File(savedPhoto).exists()) {
+            photoPath = savedPhoto
+        }
+        val savedVideo = prefs.getString(KEY_DRAFT_VIDEO, null)
+        if (!savedVideo.isNullOrBlank() && File(savedVideo).exists()) {
+            videoPath = savedVideo
+        }
+        updateEvidenceStatus()
+    }
+
+    private fun clearDraft() {
+        getSharedPreferences(DRAFT_PREFS, MODE_PRIVATE).edit().clear().apply()
+    }
+
+    private fun hasUnsavedData(): Boolean {
+        if (etDescription.text.isNotBlank() || etLocation.text.isNotBlank() || etWho.text.isNotBlank()) return true
+        if (incidentTypeChips.any { it.isChecked } || severityChips.any { it.isChecked }) return true
+        if (!voiceNotePath.isNullOrBlank() || !photoPath.isNullOrBlank() || !videoPath.isNullOrBlank()) return true
+        return false
     }
 
     private fun saveIncident() {
@@ -665,11 +929,11 @@ class LogIncidentActivity : AppCompatActivity() {
         }
 
         val incident = Incident(
-            type = selectedType,
-            description = description,
-            severity = selectedSeverity,
-            location = location,
-            who = who.ifEmpty { getString(R.string.who_unknown) },
+            type = EncryptionManager.encrypt(selectedType),
+            description = EncryptionManager.encrypt(description),
+            severity = EncryptionManager.encrypt(selectedSeverity),
+            location = EncryptionManager.encrypt(location),
+            who = EncryptionManager.encrypt(who.ifEmpty { getString(R.string.who_unknown) }),
             hasVoiceNote = !voiceNotePath.isNullOrBlank(),
             voiceNotePath = voiceNotePath,
             voiceDurationSec = recordingSeconds,
@@ -684,6 +948,11 @@ class LogIncidentActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 database.incidentDao().insertIncident(incident)
+                if (pendingVoiceNoteLoaded) {
+                    ProtectionPrefs.clearPendingVoiceNote(this@LogIncidentActivity)
+                    pendingVoiceNoteLoaded = false
+                }
+                clearDraft()
                 val successMessage = if (incident.hasVoiceNote) {
                     getString(R.string.incident_saved_with_voice_note)
                 } else {
@@ -769,7 +1038,10 @@ class LogIncidentActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopAutoRefresh()
         recordingHandler.removeCallbacksAndMessages(null)
+        playbackWaveformHandler.removeCallbacks(playbackWaveformRunnable)
+        playbackWaveformHandler.removeCallbacks(previewTimerRunnable)
         if (isRecording) {
             stopRecording(showToast = false)
         }
@@ -800,5 +1072,13 @@ class LogIncidentActivity : AppCompatActivity() {
     }
 
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+
+    private fun getAmplitude(): Int {
+        return try {
+            mediaRecorder?.maxAmplitude?.coerceAtLeast(0) ?: 0
+        } catch (_: Exception) {
+            0
+        }
+    }
 }
 

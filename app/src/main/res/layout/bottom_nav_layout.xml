@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:background="@drawable/nav_bar_background"
+    android:paddingTop="4dp"
+    android:paddingBottom="6dp">
+
+    <LinearLayout
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_nav_home"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_home"
+                android:contentDescription="@string/home"
+                android:scaleType="centerInside" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/indicator_home"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/nav_indicator_active" />
+
+        <TextView
+            android:id="@+id/label_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_log"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_nav_log"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_log"
+                android:contentDescription="@string/log_incident"
+                android:scaleType="centerInside" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/indicator_log"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/nav_indicator_active" />
+
+        <TextView
+            android:id="@+id/label_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/log_incident"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_nav_circle"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_circle"
+                android:contentDescription="@string/my_circle"
+                android:scaleType="centerInside" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/indicator_circle"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/nav_indicator_active" />
+
+        <TextView
+            android:id="@+id/label_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_circle"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_records"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_nav_records"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_records"
+                android:contentDescription="@string/records"
+                android:scaleType="centerInside" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/indicator_records"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/nav_indicator_active" />
+
+        <TextView
+            android:id="@+id/label_records"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/records"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+</LinearLayout>

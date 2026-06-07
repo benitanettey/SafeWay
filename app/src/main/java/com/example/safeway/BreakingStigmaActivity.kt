@@ -10,7 +10,12 @@ class BreakingStigmaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_breaking_stigma)
 
-        findViewById<ImageButton>(R.id.btn_back_breaking_stigma).setOnClickListener { finish() }
+        BottomNavHelper.setup(this, NavTab.HOME)
+
+        findViewById<ImageButton>(R.id.btn_back_breaking_stigma).setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
+        }
     }
 }
 

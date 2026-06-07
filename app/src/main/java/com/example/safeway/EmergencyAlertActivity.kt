@@ -49,6 +49,7 @@ class EmergencyAlertActivity : AppCompatActivity() {
 
         database = AppDatabase.getDatabase(this)
 
+        BottomNavHelper.setup(this, NavTab.HOME)
         initializeViews()
         setupListeners()
         loadContacts()
@@ -67,6 +68,7 @@ class EmergencyAlertActivity : AppCompatActivity() {
     private fun setupListeners() {
         btnBack.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
         }
 
         btnSendSOS.setOnClickListener {

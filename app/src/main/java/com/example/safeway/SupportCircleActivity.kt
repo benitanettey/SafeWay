@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,6 +26,7 @@ class SupportCircleActivity : AppCompatActivity() {
 
         database = AppDatabase.getDatabase(this)
 
+        BottomNavHelper.setup(this, NavTab.CIRCLE)
         initializeViews()
         setupListeners()
         loadContacts()
@@ -44,6 +46,7 @@ class SupportCircleActivity : AppCompatActivity() {
     private fun setupListeners() {
         btnBack.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
         }
 
         btnAddContact.setOnClickListener {
@@ -86,67 +89,76 @@ class SupportCircleActivity : AppCompatActivity() {
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            setBackgroundResource(R.drawable.card_background)
-            setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx())
+            setBackgroundResource(R.drawable.card_elevated_background)
+            setPadding(14.dpToPx(), 14.dpToPx(), 14.dpToPx(), 14.dpToPx())
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                bottomMargin = 8.dpToPx()
+                bottomMargin = 10.dpToPx()
             }
         }
 
         // Avatar
         val avatar = FrameLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(42.dpToPx(), 42.dpToPx())
+            layoutParams = LinearLayout.LayoutParams(44.dpToPx(), 44.dpToPx())
             setBackgroundResource(R.drawable.avatar_background)
         }
 
         val initials = TextView(this).apply {
             text = contact.name.take(2).uppercase()
-            textSize = 11f
+            textSize = 14f
             gravity = android.view.Gravity.CENTER
             setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.highlight_accent))
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
         }
         avatar.addView(initials)
 
-        // Info Layout
+        // Info Layout (name, phone, relationship — fills remaining space)
         val infoLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setPadding(12.dpToPx(), 0, 0, 0)
+            setPadding(14.dpToPx(), 0, 0, 0)
         }
 
-        val name = TextView(this).apply {
+        val nameTv = TextView(this).apply {
             text = contact.name
-            textSize = 14f
+            textSize = 15f
             setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.text_primary))
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
         }
 
-        val phone = TextView(this).apply {
-            text = "${contact.relationship} • ${contact.phone}"
+        val phoneTv = TextView(this).apply {
+            text = contact.phone
+            textSize = 13f
+            setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.text_secondary))
+        }
+
+        val relationshipTv = TextView(this).apply {
+            text = contact.relationship
             textSize = 12f
-            setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.neutral_muted))
-            setPadding(0, 4, 0, 0)
+            setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.neutral_text))
         }
 
-        infoLayout.addView(name)
-        infoLayout.addView(phone)
+        infoLayout.addView(nameTv)
+        infoLayout.addView(phoneTv)
+        infoLayout.addView(relationshipTv)
 
-        // Status Layout
-        val statusLayout = LinearLayout(this).apply {
+        // Actions Layout (SMS chip + Remove button stacked vertically)
+        val actionsLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+                90.dpToPx(),
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                marginEnd = 8.dpToPx()
+                marginStart = 8.dpToPx()
             }
         }
 
         val statusChip = com.google.android.material.chip.Chip(this).apply {
             text = if (contact.smsAlerts) "SMS alerts" else "Disabled"
-            textSize = 11f
+            textSize = 10f
             isClickable = false
             isCheckable = false
             chipBackgroundColor = ContextCompat.getColorStateList(
@@ -155,20 +167,21 @@ class SupportCircleActivity : AppCompatActivity() {
             )
             chipStrokeColor = ContextCompat.getColorStateList(
                 this@SupportCircleActivity,
-                R.color.border_dark
+                if (contact.smsAlerts) R.color.primary_accent else R.color.border_dark
             )
             chipStrokeWidth = 1f
             setEnsureMinTouchTargetSize(false)
+            setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.text_primary))
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                34.dpToPx()
+            )
         }
 
-        statusLayout.addView(statusChip)
-
-        // Delete Button
         val deleteBtn = Button(this).apply {
             text = "Remove"
             textSize = 11f
-            minHeight = 36.dpToPx()
-            setPadding(12.dpToPx(), 6.dpToPx(), 12.dpToPx(), 6.dpToPx())
             setTextColor(ContextCompat.getColor(this@SupportCircleActivity, R.color.emergency_red))
             background = ContextCompat.getDrawable(this@SupportCircleActivity, R.drawable.button_secondary_bg)
             setOnClickListener {
@@ -192,15 +205,19 @@ class SupportCircleActivity : AppCompatActivity() {
                 dialog.show()
             }
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                34.dpToPx()
+            ).apply {
+                topMargin = 6.dpToPx()
+            }
         }
+
+        actionsLayout.addView(statusChip)
+        actionsLayout.addView(deleteBtn)
 
         card.addView(avatar)
         card.addView(infoLayout)
-        card.addView(statusLayout)
-        card.addView(deleteBtn)
+        card.addView(actionsLayout)
 
         return card
     }

@@ -13,7 +13,12 @@ class FindHelpNearYouActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_find_help_near_you)
 
-        findViewById<ImageButton>(R.id.btn_back_find_help).setOnClickListener { finish() }
+        BottomNavHelper.setup(this, NavTab.HOME)
+
+        findViewById<ImageButton>(R.id.btn_back_find_help).setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_left)
+        }
 
         bindServiceActions(
             callButtonId = R.id.btn_call_hospital,

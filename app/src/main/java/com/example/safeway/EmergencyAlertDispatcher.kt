@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.telephony.SmsManager
 import androidx.core.content.ContextCompat
 import com.example.safeway.data.AppDatabase
@@ -94,24 +96,49 @@ object EmergencyAlertDispatcher {
         }
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+        // Fetch last known location instantly as fallback
+        var lastKnownLat: Double? = null
+        var lastKnownLng: Double? = null
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { loc ->
+                if (loc != null) {
+                    lastKnownLat = loc.latitude
+                    lastKnownLng = loc.longitude
+                }
+            }
+
+        // Also try fresh GPS fix with a 5-second timeout.
+        // If GPS locks fast, we use the fresh fix. If not, we fall back
+        // to the cached lastLocation above — SOS never waits more than 5s.
         val cancellationToken = CancellationTokenSource()
+        val handler = Handler(Looper.getMainLooper())
+        var resolved = false
+
+        handler.postDelayed({
+            if (!resolved) {
+                resolved = true
+                cancellationToken.cancel()
+                onLocationReady(lastKnownLat, lastKnownLng)
+            }
+        }, 5000)
 
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationToken.token)
             .addOnSuccessListener { location ->
-                if (location != null) {
-                    onLocationReady(location.latitude, location.longitude)
-                } else {
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener { lastKnown ->
-                            onLocationReady(lastKnown?.latitude, lastKnown?.longitude)
-                        }
-                        .addOnFailureListener {
-                            onLocationReady(null, null)
-                        }
-                }
+                if (resolved) return@addOnSuccessListener
+                resolved = true
+                handler.removeCallbacksAndMessages(null)
+                onLocationReady(
+                    location?.latitude ?: lastKnownLat,
+                    location?.longitude ?: lastKnownLng
+                )
             }
             .addOnFailureListener {
-                onLocationReady(null, null)
+                if (resolved) return@addOnFailureListener
+                resolved = true
+                handler.removeCallbacksAndMessages(null)
+                onLocationReady(lastKnownLat, lastKnownLng)
             }
     }
 

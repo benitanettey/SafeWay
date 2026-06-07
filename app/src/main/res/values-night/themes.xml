@@ -1,8 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
     <style name="Base.Theme.SafeWay" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary_accent</item>
+        <item name="colorPrimaryDark">@color/primary_accent_dim</item>
         <item name="colorSecondary">@color/highlight_accent</item>
-        <item name="colorTertiary">@color/highlight_accent</item>
+        <item name="colorTertiary">@color/highlight_accent_light</item>
+        <item name="android:windowBackground">@color/primary_background</item>
+        <item name="android:statusBarColor">@color/primary_background</item>
+        <item name="android:navigationBarColor">@color/primary_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:colorControlNormal">@color/neutral_muted</item>
+        <item name="android:colorControlActivated">@color/highlight_accent</item>
     </style>
 </resources>

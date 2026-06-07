@@ -1,12 +1,16 @@
 package com.example.safeway
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -26,6 +30,8 @@ import com.example.safeway.data.AppDatabase
 import com.example.safeway.data.Hotline
 import com.example.safeway.overlay.OverlayPrefs
 import com.example.safeway.overlay.ShieldOverlayService
+import com.example.safeway.service.ProtectionAccessibilityService
+import com.example.safeway.service.ProtectionForegroundService
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -37,6 +43,32 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var database: AppDatabase
     private lateinit var hotlineGrid: GridLayout
     private lateinit var btnAddHotline: LinearLayout
+    private lateinit var btnBtProtection: LinearLayout
+
+    // Permissions card
+    private lateinit var permissionsHomeCard: LinearLayout
+    private lateinit var permissionsHomeList: LinearLayout
+    private lateinit var btnHomeFixPermissions: Button
+
+    private val homePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { _ -> refreshHomePermissions() }
+
+    private val requiredHomePermissions: List<String> by lazy {
+        buildList {
+            add(Manifest.permission.RECORD_AUDIO)
+            add(Manifest.permission.CAMERA)
+            add(Manifest.permission.ACCESS_FINE_LOCATION)
+            add(Manifest.permission.SEND_SMS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                add(Manifest.permission.BLUETOOTH_CONNECT)
+                add(Manifest.permission.BLUETOOTH_SCAN)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +77,14 @@ class HomeActivity : AppCompatActivity() {
         shieldEnabled = OverlayPrefs.isEnabled(this)
         database = AppDatabase.getDatabase(this)
 
+        // Restart protection service if process was killed
+        ProtectionForegroundService.ensureRunning(this)
+
         setupQuickActions()
         setupBottomNavigation()
         setupHotlines()
         setupShieldToggle()
+        setupPermissionsCard()
     }
 
     override fun onResume() {
@@ -68,6 +104,7 @@ class HomeActivity : AppCompatActivity() {
                 startOverlayService()
             }
         }
+        refreshHomePermissions()
     }
 
     private fun setupQuickActions() {
@@ -79,46 +116,38 @@ class HomeActivity : AppCompatActivity() {
 
         btnEmergency.setOnClickListener {
             startActivity(Intent(this, EmergencyAlertActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnLogIncident.setOnClickListener {
             startActivity(Intent(this, LogIncidentActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnMyCircle.setOnClickListener {
             startActivity(Intent(this, SupportCircleActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnRecords.setOnClickListener {
             startActivity(Intent(this, RecordsActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
 
         btnResourcesCenter.setOnClickListener {
             startActivity(Intent(this, ResourcesActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
+        }
+
+        btnBtProtection = findViewById(R.id.btn_bt_protection)
+        btnBtProtection.setOnClickListener {
+            startActivity(Intent(this, com.example.safeway.protection.ProtectionStatusActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_in)
         }
     }
 
     private fun setupBottomNavigation() {
-        val navHome = findViewById<LinearLayout>(R.id.nav_home)
-        val navLog = findViewById<LinearLayout>(R.id.nav_log)
-        val navCircle = findViewById<LinearLayout>(R.id.nav_circle)
-        val navRecords = findViewById<LinearLayout>(R.id.nav_records)
-
-        navHome.setOnClickListener {
-            // Already on home
-        }
-
-        navLog.setOnClickListener {
-            startActivity(Intent(this, LogIncidentActivity::class.java))
-        }
-
-        navCircle.setOnClickListener {
-            startActivity(Intent(this, SupportCircleActivity::class.java))
-        }
-
-        navRecords.setOnClickListener {
-            startActivity(Intent(this, RecordsActivity::class.java))
-        }
+        BottomNavHelper.setup(this, NavTab.HOME)
     }
 
     private fun setupHotlines() {
@@ -168,6 +197,180 @@ class HomeActivity : AppCompatActivity() {
                     requestOverlayPermission()
                 }
             }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Permissions card — shows at the top of home when permissions are missing
+    // ------------------------------------------------------------------
+
+    private fun setupPermissionsCard() {
+        permissionsHomeCard = findViewById(R.id.permissions_home_card)
+        permissionsHomeList = findViewById(R.id.permissions_home_list)
+        btnHomeFixPermissions = findViewById(R.id.btn_home_fix_permissions)
+
+        btnHomeFixPermissions.setOnClickListener { requestMissingHomePermissions() }
+    }
+
+    private fun getMissingHomePermissions(): List<String> {
+        if (requiredHomePermissions.isEmpty()) return emptyList()
+        return requiredHomePermissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun refreshHomePermissions() {
+        val missing = getMissingHomePermissions()
+
+        // Also check non-dialog permissions (overlay, accessibility)
+        val overlayMissing = !canDrawOverlays()
+        val accessibilityMissing = !ProtectionAccessibilityService.isEnabled(this)
+
+        if (missing.isEmpty() && !overlayMissing && !accessibilityMissing) {
+            permissionsHomeCard.visibility = View.GONE
+            return
+        }
+
+        permissionsHomeCard.visibility = View.VISIBLE
+        permissionsHomeList.removeAllViews()
+
+        for (perm in missing) {
+            permissionsHomeList.addView(createHomePermissionRow(perm))
+        }
+        if (overlayMissing) {
+            permissionsHomeList.addView(createHomePermissionRow(
+                getString(R.string.permission_overlay),
+                getString(R.string.perm_desc_overlay)
+            ))
+        }
+        if (accessibilityMissing) {
+            permissionsHomeList.addView(createHomePermissionRow(
+                getString(R.string.permission_accessibility),
+                getString(R.string.perm_desc_accessibility)
+            ))
+        }
+    }
+
+    private fun getPermissionDescription(permission: String): String {
+        return when (permission) {
+            Manifest.permission.RECORD_AUDIO -> getString(R.string.perm_desc_mic)
+            Manifest.permission.CAMERA -> getString(R.string.perm_desc_camera)
+            Manifest.permission.ACCESS_FINE_LOCATION -> getString(R.string.perm_desc_location)
+            Manifest.permission.SEND_SMS -> getString(R.string.perm_desc_sms)
+            Manifest.permission.POST_NOTIFICATIONS -> getString(R.string.perm_desc_notifications)
+            Manifest.permission.BLUETOOTH_CONNECT -> getString(R.string.perm_desc_bluetooth_connect)
+            Manifest.permission.BLUETOOTH_SCAN -> getString(R.string.perm_desc_bluetooth_scan)
+            else -> getString(R.string.permissions_missing_hint)
+        }
+    }
+
+    private fun createHomePermissionRow(
+        permissionOrLabel: String,
+        description: String? = null
+    ): View {
+        val label: String
+        val desc: String
+        if (description != null) {
+            label = permissionOrLabel
+            desc = description
+        } else {
+            label = getPermissionLabel(permissionOrLabel)
+            desc = getPermissionDescription(permissionOrLabel)
+        }
+
+        return LinearLayout(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, dpToPx(8)) }
+            orientation = LinearLayout.VERTICAL
+            background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.card_background)
+
+            // Top row: label + "Missing" badge
+            addView(LinearLayout(this@HomeActivity).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(dpToPx(10), dpToPx(8), dpToPx(10), dpToPx(4))
+
+                addView(TextView(this@HomeActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    text = label
+                    textSize = 14f
+                    setTypeface(null, Typeface.BOLD)
+                    setTextColor(ContextCompat.getColor(this@HomeActivity, R.color.text_primary))
+                })
+
+                addView(TextView(this@HomeActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    text = getString(R.string.permission_missing)
+                    textSize = 11f
+                    setTypeface(null, Typeface.BOLD)
+                    setTextColor(ContextCompat.getColor(this@HomeActivity, R.color.emergency_red))
+                    setPadding(dpToPx(6), dpToPx(2), dpToPx(6), dpToPx(2))
+                })
+            })
+
+            // Description row
+            addView(TextView(this@HomeActivity).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { setMargins(dpToPx(10), 0, dpToPx(10), dpToPx(8)) }
+                text = desc
+                textSize = 12f
+                setTextColor(ContextCompat.getColor(this@HomeActivity, R.color.neutral_text))
+                setLineSpacing(4f, 1f)
+            })
+        }
+    }
+
+    private fun getPermissionLabel(permission: String): String {
+        return when (permission) {
+            Manifest.permission.RECORD_AUDIO -> "Microphone"
+            Manifest.permission.CAMERA -> "Camera"
+            Manifest.permission.ACCESS_FINE_LOCATION -> "Location"
+            Manifest.permission.SEND_SMS -> "SMS"
+            Manifest.permission.POST_NOTIFICATIONS -> "Notifications"
+            Manifest.permission.BLUETOOTH_CONNECT -> "Bluetooth"
+            Manifest.permission.BLUETOOTH_SCAN -> "Bluetooth Scan"
+            else -> permission
+        }
+    }
+
+    private fun requestMissingHomePermissions() {
+        val missing = getMissingHomePermissions()
+        val overlayMissing = !canDrawOverlays()
+        val accessibilityMissing = !ProtectionAccessibilityService.isEnabled(this)
+
+        // Request runtime permissions first
+        if (missing.isNotEmpty()) {
+            homePermissionLauncher.launch(missing.toTypedArray())
+            return
+        }
+
+        // Navigate to overlay settings if needed
+        if (overlayMissing) {
+            Toast.makeText(this, getString(R.string.overlay_permission_hint), Toast.LENGTH_LONG).show()
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+            startActivity(intent)
+            return
+        }
+
+        // Navigate to accessibility settings if needed
+        if (accessibilityMissing) {
+            Toast.makeText(this, getString(R.string.accessibility_permission_hint), Toast.LENGTH_LONG).show()
+            ProtectionAccessibilityService.openSettings(this)
+            return
         }
     }
 
@@ -335,7 +538,7 @@ class HomeActivity : AppCompatActivity() {
             })
         }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.add_hotline_title))
             .setView(container)
             .setPositiveButton(getString(R.string.save)) { _, _ ->
@@ -355,7 +558,18 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+            .create()
+            .apply {
+                setOnShowListener {
+                    getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                        ContextCompat.getColor(this@HomeActivity, R.color.highlight_accent)
+                    )
+                    getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                        ContextCompat.getColor(this@HomeActivity, R.color.neutral_text)
+                    )
+                }
+            }
+        dialog.show()
     }
 
     private fun confirmDeleteHotline(hotline: Hotline) {
